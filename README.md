@@ -20,6 +20,10 @@ pnpm install
 cd ./apps/books-stock
 ```
 
+In this folder create a `.env` file and declare env variables by following `.env.example` example. 
+
+Then:
+
 ```sh
 docker-compose up -d
 ```
