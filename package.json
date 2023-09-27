@@ -1,0 +1,22 @@
+{
+  "name": "booksstore-project",
+  "version": "1.0.0",
+  "description": "Books store",
+  "author": "Anatoli Semianiaka <toli44777@gmail.com>",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=7.5.1"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.1",
+    "typescript": "^5.2.2"
+  }
+}
