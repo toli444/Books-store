@@ -20,7 +20,7 @@ pnpm install
 cd ./apps/books-stock
 ```
 
-In this folder create a `.env` file and declare env variables by following `.env.example` example. 
+In this folder create an `.env` file and declare env variables by following `.env.example` example. 
 
 Then:
 
