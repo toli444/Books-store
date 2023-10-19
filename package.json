@@ -4,8 +4,7 @@
   "description": "Books store",
   "author": "Anatoli Semianiaka <toli44777@gmail.com>",
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=7.5.1"
+    "node": ">=18"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
@@ -18,5 +17,6 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "typescript": "^5.2.2"
-  }
+  },
+  "workspaces": ["./apps/*"]
 }

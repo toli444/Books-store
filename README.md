@@ -2,7 +2,6 @@
 
 ### What you'll need
 
-* pnpm [PNPM installation](https://pnpm.io/installation).
 * Node LTS >=18
 * Docker
 
@@ -11,7 +10,7 @@
 To install the monorepo and all of its dependencies, run the following command at the root of the project:
 
 ```sh
-pnpm install
+npm install
 ```
 
 ## Start book_stock app

@@ -1,7 +1,9 @@
 import express, { Request, Response } from "express";
+import "express-async-errors";
 import * as dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import booksRouter from "./routes/books.route";
+import errorHandler from "./middlewares/errorHandler.middleware";
 
 export const prisma = new PrismaClient();
 
@@ -12,7 +14,10 @@ const app = express();
 
 async function main() {
   app.use(express.json());
+
   app.use("/books", booksRouter);
+
+  app.use(errorHandler);
 
   // Catch unregistered routes
   app.all("*", (req: Request, res: Response) => {
@@ -36,13 +41,18 @@ main()
     process.exit(1);
   });
 
+process.on("unhandledRejection", (reason: Error | any) => {
+  throw new Error(reason?.message || reason);
+});
+
 async function testDB() {
   // await prisma.book.create({
   //   data: {
   //     name: "The Alchemist",
   //     author: {
   //       create: {
-  //         name: "Paulo Coelho"
+  //         firstName: "Paulo",
+  //         lastName: "Coelho"
   //       }
   //     }
   //   }
@@ -56,13 +66,13 @@ async function testDB() {
 
   console.log("ALL BOOKS: ", allBooks);
 
-  // await prisma.autor.create({
+  // await prisma.author.create({
   //   data: {
   //     name: "Miguel de Cervantes"
   //   }
   // });
 
-  const allAuthors = await prisma.autor.findMany();
+  const allAuthors = await prisma.author.findMany();
 
   console.log("ALL AUTHORS: ", allAuthors);
 }
