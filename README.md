@@ -28,5 +28,5 @@ docker-compose up -d
 ```
 
 ```sh
-pnpm run dev
+npm run dev
 ```

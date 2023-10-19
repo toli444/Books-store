@@ -1,6 +1,6 @@
 import { object, string, coerce, TypeOf } from "zod";
 
-export const getOneBookSchema = object({
+export const bookIdSchema = object({
   bookId: coerce.number()
 });
 
@@ -25,7 +25,19 @@ export const createBookWithAuthorInfoSchema = createBookCommonSchema.extend({
   })
 });
 
-export type GetOneBookInput = TypeOf<typeof getOneBookSchema>;
+export const updateBookSchema = object({
+  bookId: coerce.number(),
+  name: string(),
+  authorId: coerce.number()
+});
+
+export const patchBookSchema = object({
+  bookId: coerce.number(),
+  name: string().optional(),
+  authorId: coerce.number().optional()
+});
+
+export type BookIdInput = TypeOf<typeof bookIdSchema>;
 
 export type CreateBookWithAuthorIdInput = TypeOf<
   typeof createBookWithAuthorIdSchema
@@ -34,3 +46,7 @@ export type CreateBookWithAuthorIdInput = TypeOf<
 export type CreateBookWithAuthorInfoInput = TypeOf<
   typeof createBookWithAuthorInfoSchema
 >;
+
+export type UpdateBookInput = TypeOf<typeof updateBookSchema>;
+
+export type PatchBookInput = TypeOf<typeof patchBookSchema>;

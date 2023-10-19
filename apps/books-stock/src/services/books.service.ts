@@ -1,6 +1,25 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../server";
 
+export function getOne({ bookId }: { bookId: number }) {
+  return prisma.book.findUnique({
+    where: {
+      id: bookId
+    },
+    include: {
+      author: true
+    }
+  });
+}
+
+export function getMany() {
+  return prisma.book.findMany({
+    include: {
+      author: true
+    }
+  });
+}
+
 export function createWithAuthorInfo({
   name,
   authorFirstName,
@@ -42,16 +61,80 @@ export function createWithAuthorId({
   authorId: number;
 }) {
   return prisma.book.create({
-    data: {
+    data: Prisma.validator<Prisma.BookCreateInput>()({
       name,
       author: {
         connect: {
           id: authorId
         }
       }
-    },
+    }),
     include: {
       author: true
+    }
+  });
+}
+
+export function updateBook({
+  bookId,
+  name,
+  authorId
+}: {
+  bookId: number;
+  name: string;
+  authorId: number;
+}) {
+  return prisma.book.update({
+    where: {
+      id: bookId
+    },
+    data: Prisma.validator<Prisma.BookUpdateInput>()({
+      name,
+      author: {
+        connect: {
+          id: authorId
+        }
+      }
+    }),
+    include: {
+      author: true
+    }
+  });
+}
+
+export function patchBook({
+  bookId,
+  name,
+  authorId
+}: {
+  bookId: number;
+  name?: string;
+  authorId?: number;
+}) {
+  return prisma.book.update({
+    where: {
+      id: bookId
+    },
+    data: Prisma.validator<Prisma.BookUpdateInput>()({
+      name,
+      author: authorId
+        ? {
+            connect: {
+              id: authorId
+            }
+          }
+        : undefined
+    }),
+    include: {
+      author: true
+    }
+  });
+}
+
+export function remove({ bookId }: { bookId: number }) {
+  return prisma.book.delete({
+    where: {
+      id: bookId
     }
   });
 }
