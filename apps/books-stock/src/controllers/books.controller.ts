@@ -41,7 +41,7 @@ export async function update(
   req: Request,
   res: Response<unknown, UpdateBookInput>
 ) {
-  const book = await booksService.updateBook(res.locals);
+  const book = await booksService.update(res.locals);
   res.json(book);
 }
 
@@ -49,7 +49,7 @@ export async function patch(
   req: Request,
   res: Response<unknown, PatchBookInput>
 ) {
-  const book = await booksService.patchBook(res.locals);
+  const book = await booksService.patch(res.locals);
   res.json(book);
 }
 

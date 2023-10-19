@@ -3,7 +3,13 @@ import { Prisma } from "@prisma/client";
 import { AppError, HttpCode } from "../utils/AppError";
 import { ZodError } from "zod";
 
-const errorHandler = (error: Error | AppError, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (
+  error: Error | AppError,
+  req: Request,
+  res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: NextFunction
+) => {
   console.log("Error: ", error);
 
   if (error instanceof AppError) {

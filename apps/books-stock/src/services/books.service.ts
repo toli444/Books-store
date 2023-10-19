@@ -75,7 +75,7 @@ export function createWithAuthorId({
   });
 }
 
-export function updateBook({
+export function update({
   bookId,
   name,
   authorId
@@ -102,7 +102,7 @@ export function updateBook({
   });
 }
 
-export function patchBook({
+export function patch({
   bookId,
   name,
   authorId
