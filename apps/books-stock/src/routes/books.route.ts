@@ -13,7 +13,7 @@ import BooksController from "../controllers/books.controller";
 
 const router = express.Router();
 
-const booksController = container.get<BooksController>(BooksController);
+const booksController = container.get(BooksController);
 
 router
   .get("/", booksController.get)
