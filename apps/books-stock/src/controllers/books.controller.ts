@@ -13,7 +13,7 @@ import BooksService from "../services/books.service";
 class BooksController {
   private booksService: BooksService;
 
-  public constructor(@inject(BooksService) booksService: BooksService) {
+  public constructor(booksService: BooksService) {
     this.booksService = booksService;
   }
   public get = async (req: Request, res: Response) => {
