@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import * as BooksController from "../controllers/books.controller";
 import validate from "../middlewares/validation.middleware";
 import {
   createBookWithAuthorInfoSchema,
@@ -9,20 +8,24 @@ import {
   updateBookSchema,
   patchBookSchema
 } from "../schema/book.schema";
+import { container } from "../inversify.config";
+import BooksController from "../controllers/books.controller";
 
 const router = express.Router();
 
+const booksController = container.get<BooksController>(BooksController);
+
 router
-  .get("/", BooksController.get)
-  .get("/:bookId", validate(bookIdSchema), BooksController.getOne)
-  .post("/", validate(createBookWithAuthorIdSchema), BooksController.create)
+  .get("/", booksController.get)
+  .get("/:bookId", validate(bookIdSchema), booksController.getOne)
+  .post("/", validate(createBookWithAuthorIdSchema), booksController.create)
   .post(
     "/with-author-info",
     validate(createBookWithAuthorInfoSchema),
-    BooksController.createWithAuthorInfo
+    booksController.createWithAuthorInfo
   )
-  .put("/:bookId", validate(updateBookSchema), BooksController.update)
-  .patch("/:bookId", validate(patchBookSchema), BooksController.patch)
-  .delete("/:bookId", validate(bookIdSchema), BooksController.remove);
+  .put("/:bookId", validate(updateBookSchema), booksController.update)
+  .patch("/:bookId", validate(patchBookSchema), booksController.patch)
+  .delete("/:bookId", validate(bookIdSchema), booksController.remove);
 
 export default router;
