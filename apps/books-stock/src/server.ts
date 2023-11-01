@@ -3,8 +3,19 @@ import express, { Request, Response } from "express";
 import "express-async-errors";
 import * as dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import booksRouter from "./routes/books.route";
+import booksRouter from "./api/books/books.route";
+import authRouter from "./api/auth/auth.route";
 import errorHandler from "./middlewares/errorHandler.middleware";
+import { configurePassport } from "./passport-config";
+import passport from "passport";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+interface UserBasicInfo {
+  _id: string;
+  email: string;
+  roles: string[];
+}
 
 export const prisma = new PrismaClient();
 
@@ -12,10 +23,15 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
+configurePassport(passport);
 
 async function main() {
   app.use(express.json());
+  app.use(cors());
+  app.use(cookieParser());
+  app.use(passport.initialize());
 
+  app.use("/auth", authRouter);
   app.use("/books", booksRouter);
 
   app.use(errorHandler);

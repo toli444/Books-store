@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Prisma } from "@prisma/client";
-import { prisma } from "../server";
+import { prisma } from "../../server";
 
 @injectable()
 class BooksService {

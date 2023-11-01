@@ -1,4 +1,4 @@
-import { object, string, coerce, TypeOf } from "zod";
+import { object, string, coerce } from "zod";
 
 export const bookIdSchema = object({
   bookId: coerce.number()
@@ -36,17 +36,3 @@ export const patchBookSchema = object({
   name: string().optional(),
   authorId: coerce.number().optional()
 });
-
-export type BookIdInput = TypeOf<typeof bookIdSchema>;
-
-export type CreateBookWithAuthorIdInput = TypeOf<
-  typeof createBookWithAuthorIdSchema
->;
-
-export type CreateBookWithAuthorInfoInput = TypeOf<
-  typeof createBookWithAuthorInfoSchema
->;
-
-export type UpdateBookInput = TypeOf<typeof updateBookSchema>;
-
-export type PatchBookInput = TypeOf<typeof patchBookSchema>;

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { Prisma } from "@prisma/client";
-import { AppError, HttpCode } from "../utils/AppError";
+import { AppError, HttpStatusCode } from "../utils/AppError";
 import { ZodError } from "zod";
 
 const errorHandler = (
-  error: Error | AppError,
+  error: Error,
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -13,24 +13,24 @@ const errorHandler = (
   console.log("Error: ", error);
 
   if (error instanceof AppError) {
-    return res.status(error.httpCode).json({
+    return res.status(error.statusCode).json({
       error: error.message
     });
   }
 
   if (error instanceof ZodError) {
-    return res.status(HttpCode.BAD_REQUEST).json({
+    return res.status(HttpStatusCode.BAD_REQUEST).json({
       error: error.flatten().fieldErrors
     });
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    return res.status(HttpCode.BAD_REQUEST).json({
+    return res.status(HttpStatusCode.BAD_REQUEST).json({
       error: error.meta?.cause || "DB Error"
     });
   }
 
-  res.status(500).json({
+  res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     error: "Internal server error'"
   });
 };
