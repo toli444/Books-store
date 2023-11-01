@@ -12,14 +12,14 @@ const booksController = container.get(BooksController);
 router
   .get("/", booksController.get)
   .get("/:bookId", booksController.getOne)
-  .post("/", authorize(UserRoles.CUSTOMER), booksController.create)
+  .post("/", authorize(UserRoles.ADMIN), booksController.create)
   .post(
     "/with-author-info",
-    authorize(UserRoles.CUSTOMER),
+    authorize(UserRoles.ADMIN),
     booksController.createWithAuthorInfo
   )
-  .put("/:bookId", authorize(UserRoles.CUSTOMER), booksController.update)
-  .patch("/:bookId", authorize(UserRoles.CUSTOMER), booksController.patch)
-  .delete("/:bookId", authorize(UserRoles.CUSTOMER), booksController.remove);
+  .put("/:bookId", authorize(UserRoles.ADMIN), booksController.update)
+  .patch("/:bookId", authorize(UserRoles.ADMIN), booksController.patch)
+  .delete("/:bookId", authorize(UserRoles.ADMIN), booksController.remove);
 
 export default router;

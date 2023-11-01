@@ -15,7 +15,8 @@
     "db:migrate": "npx prisma migrate dev --name user-entity --create-only && npx prisma generate",
     "db:push": "npx prisma db push",
     "db:start": "docker-compose up -d",
-    "db:stop": "docker-compose down"
+    "db:stop": "docker-compose down",
+    "db:gui": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "5.4.2",

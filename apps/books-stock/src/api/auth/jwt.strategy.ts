@@ -1,9 +1,7 @@
+import { decorate, injectable } from "inversify";
 import { Strategy, ExtractJwt } from "passport-jwt";
-import { users } from "./api/auth/auth.controller";
-import passport from "passport";
+import UsersService from "../users/users.service";
 import { Request } from "express";
-
-type PassportType = typeof passport;
 
 interface IRequest extends Request {
   cookies: {
@@ -18,9 +16,13 @@ interface IJwtPayload {
 const cookieExtractor = (req: IRequest) => {
   return req.cookies?.accessToken || null;
 };
-export function configurePassport(passport: PassportType) {
-  passport.use(
-    new Strategy(
+
+decorate(injectable(), Strategy);
+
+@injectable()
+class JwtStrategy extends Strategy {
+  public constructor(usersService: UsersService) {
+    super(
       {
         jwtFromRequest: ExtractJwt.fromExtractors([
           cookieExtractor,
@@ -28,8 +30,8 @@ export function configurePassport(passport: PassportType) {
         ]),
         secretOrKey: process.env.JWT_SECRET
       },
-      (jwtPayload: IJwtPayload, done) => {
-        const user = users.find((u) => u.id === jwtPayload.id);
+      async (jwtPayload: IJwtPayload, done) => {
+        const user = await usersService.getOne({ userId: jwtPayload.id });
 
         if (user) {
           return done(null, user);
@@ -37,6 +39,8 @@ export function configurePassport(passport: PassportType) {
 
         return done(null, false);
       }
-    )
-  );
+    );
+  }
 }
+
+export default JwtStrategy;

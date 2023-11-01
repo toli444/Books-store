@@ -10,7 +10,7 @@ export const authorize = (requiredRole: UserRoles) => [
   (req: Request, res: Response, next: NextFunction) => {
     const user = req.user as IUser;
 
-    if (user && user.role >= requiredRole) {
+    if (user && user.role === requiredRole) {
       return next();
     } else {
       return res

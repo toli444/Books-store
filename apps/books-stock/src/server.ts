@@ -6,16 +6,13 @@ import { PrismaClient } from "@prisma/client";
 import booksRouter from "./api/books/books.route";
 import authRouter from "./api/auth/auth.route";
 import errorHandler from "./middlewares/errorHandler.middleware";
-import { configurePassport } from "./passport-config";
 import passport from "passport";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { container } from "./inversify.config";
+import JwtStrategy from "./api/auth/jwt.strategy";
 
-interface UserBasicInfo {
-  _id: string;
-  email: string;
-  roles: string[];
-}
+const jwtStrategy = container.get(JwtStrategy);
 
 export const prisma = new PrismaClient();
 
@@ -23,12 +20,12 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
-configurePassport(passport);
 
 async function main() {
   app.use(express.json());
   app.use(cors());
   app.use(cookieParser());
+  passport.use(jwtStrategy);
   app.use(passport.initialize());
 
   app.use("/auth", authRouter);

@@ -5,16 +5,11 @@ import {
   tokenRoundsOfHashing,
   accessTokenExpiresIn
 } from "../../config/defaults";
-import { HttpStatusCode } from "../../utils/AppError";
+import { AppError, HttpStatusCode } from "../../utils/AppError";
 import UsersService from "../users/users.service";
-import { UserRoles } from "./auth.types";
-import { IUser } from "../users/users.types";
 import { jwtCookieName } from "../../config/defaults";
 import omit from "lodash.omit";
-
-let id = 0;
-
-export const users: Array<IUser> = [];
+import { loginUserSchema, registerUserSchema } from "./auth.schema";
 
 const accessTokenCookieOptions: CookieOptions = {
   maxAge: accessTokenExpiresIn * 60 * 1000,
@@ -31,62 +26,54 @@ class AuthController {
     this.usersService = usersService;
   }
 
-  public register = async (
-    req: Request<
-      unknown,
-      unknown,
-      {
-        email: string;
-        password: string;
-      }
-    >,
-    res: Response
-  ) => {
-    const { email, password } = req.body;
+  public register = async (req: Request, res: Response) => {
+    const { email, password, firstName, lastName } = registerUserSchema.parse(
+      req.body
+    );
 
-    const doesUserExist = users.find((u) => u.email === email);
+    const doesUserExist = await this.usersService.getOne({ email });
 
     if (doesUserExist) {
-      res
-        .status(HttpStatusCode.CONFLICT)
-        .json({ error: "The email already exists" });
+      throw new AppError({
+        statusCode: HttpStatusCode.CONFLICT,
+        message: "The email already exists"
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, tokenRoundsOfHashing);
-    const newUser = {
-      id: ++id,
-      role: UserRoles.CUSTOMER,
+
+    const user = await this.usersService.create({
       email,
-      password: hashedPassword
-    };
-    users.push(newUser);
+      password: hashedPassword,
+      firstName,
+      lastName
+    });
 
     res.status(HttpStatusCode.CREATED).json({
       message: "User registered successfully",
-      user: omit(newUser, "password")
+      user: omit(user, "password")
     });
   };
 
-  public login = async (
-    req: Request<unknown, unknown, IUser>,
-    res: Response
-  ) => {
-    const { email, password } = req.body;
+  public login = async (req: Request, res: Response) => {
+    const { email, password } = loginUserSchema.parse(req.body);
 
-    const user = users.find((u) => u.email === email);
+    const user = await this.usersService.getOne({ email });
 
     if (!user) {
-      return res
-        .status(HttpStatusCode.BAD_REQUEST)
-        .json({ error: "Invalid username or password" });
+      throw new AppError({
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        message: "Invalid username or password"
+      });
     }
 
     const doPasswordsMatch = await bcrypt.compare(password, user.password);
 
     if (!doPasswordsMatch) {
-      return res
-        .status(HttpStatusCode.BAD_REQUEST)
-        .json({ error: "Invalid username or password" });
+      throw new AppError({
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        message: "Invalid username or password"
+      });
     }
 
     const { accessToken } = this.usersService.signToken({
@@ -105,7 +92,7 @@ class AuthController {
       expires: new Date(0)
     });
     res.status(HttpStatusCode.OK).json({
-      message: "User registered successfully"
+      message: "User logged out successfully"
     });
   };
 }

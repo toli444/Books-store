@@ -10,8 +10,6 @@ const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ) => {
-  console.log("Error: ", error);
-
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       error: error.message
@@ -29,6 +27,8 @@ const errorHandler = (
       error: error.meta?.cause || "DB Error"
     });
   }
+
+  console.log("Error: ", error);
 
   res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     error: "Internal server error'"
