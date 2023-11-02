@@ -8,6 +8,9 @@ import {
   patchBookSchema
 } from "./book.schema";
 import BooksService from "./books.service";
+import * as csv from "fast-csv";
+import fs from "fs";
+import { AppError, HttpStatusCode } from "../../utils/AppError";
 
 @injectable()
 class BooksController {
@@ -37,6 +40,36 @@ class BooksController {
     const data = createBookWithAuthorInfoSchema.parse(req.body);
     const book = await this.booksService.createWithAuthorInfo(data);
     res.json(book);
+  };
+
+  public createFromCSV = (req: Request, res: Response) => {
+    if (!req.file) {
+      throw new AppError({
+        statusCode: HttpStatusCode.BAD_REQUEST,
+        message: "Please upload a CSV file."
+      });
+    }
+
+    const csvData: Array<{ name: string; authorId: number }> = [];
+    const filePath = __basedir + "/uploads/" + req.file.filename;
+    const fileName = req.file.originalname;
+
+    fs.createReadStream(filePath)
+      .pipe(csv.parse({ headers: true }))
+      .on("error", (error) => {
+        throw error.message;
+      })
+      .on("data", ({ name, authorId }: { name: string; authorId: string }) => {
+        csvData.push({ name, authorId: parseInt(authorId, 10) });
+      })
+      .on("end", () => {
+        // insertMany csvData
+        void this.booksService.createMany(csvData).then(() => {
+          res.status(HttpStatusCode.OK).send({
+            message: `Upload/import the CSV data into database successfully: ${fileName}`
+          });
+        });
+      });
   };
 
   public update = async (req: Request, res: Response) => {

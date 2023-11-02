@@ -12,6 +12,11 @@ import cookieParser from "cookie-parser";
 import { container } from "./inversify.config";
 import JwtStrategy from "./api/auth/jwt.strategy";
 
+declare global {
+  // eslint-disable-next-line no-var
+  var __basedir: string;
+}
+
 const jwtStrategy = container.get(JwtStrategy);
 
 export const prisma = new PrismaClient();
@@ -20,6 +25,8 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
+
+global.__basedir = __dirname;
 
 async function main() {
   app.use(express.json());

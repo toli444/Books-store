@@ -78,6 +78,22 @@ class BooksService {
     });
   }
 
+  public createMany(
+    books: Array<{
+      name: string;
+      authorId: number;
+    }>
+  ) {
+    return prisma.book.createMany({
+      data: books.map((book) =>
+        Prisma.validator<Prisma.BookCreateManyInput>()({
+          name: book.name,
+          authorId: book.authorId
+        })
+      )
+    });
+  }
+
   public update({
     bookId,
     name,
