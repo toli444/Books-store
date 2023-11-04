@@ -8,9 +8,10 @@ import {
   patchBookSchema
 } from "./book.schema";
 import BooksService from "./books.service";
-import * as csv from "fast-csv";
-import fs from "fs";
 import { AppError, HttpStatusCode } from "../../utils/AppError";
+import { readDataFromCsvFile } from "./utils";
+import fs from "fs";
+import path from "path";
 
 @injectable()
 class BooksController {
@@ -42,7 +43,7 @@ class BooksController {
     res.json(book);
   };
 
-  public createFromCSV = (req: Request, res: Response) => {
+  public createFromCSV = async (req: Request, res: Response) => {
     if (!req.file) {
       throw new AppError({
         statusCode: HttpStatusCode.BAD_REQUEST,
@@ -50,37 +51,21 @@ class BooksController {
       });
     }
 
-    const csvData: Array<{
+    const filePath = path.join(req.file.destination, req.file.filename);
+    const fileName = req.file.originalname;
+    const csvData = await readDataFromCsvFile<{
       name: string;
       authorFirstName: string;
       authorLastName: string;
-    }> = [];
-    const filePath = __basedir + "/uploads/" + req.file.filename;
-    const fileName = req.file.originalname;
+    }>({ filePath });
 
-    fs.createReadStream(filePath)
-      .pipe(csv.parse({ headers: true }))
-      .on("error", (error) => {
-        throw error.message;
-      })
-      .on(
-        "data",
-        (data: {
-          name: string;
-          authorFirstName: string;
-          authorLastName: string;
-        }) => {
-          csvData.push(data);
-        }
-      )
-      .on("end", () => {
-        // insertMany csvData
-        void this.booksService.createMany(csvData).then(() => {
-          res.status(HttpStatusCode.OK).send({
-            message: `Upload/import the CSV data into database successfully: ${fileName}`
-          });
-        });
-      });
+    await this.booksService.createMany(csvData);
+
+    fs.unlinkSync(filePath);
+
+    res.status(HttpStatusCode.OK).send({
+      message: `Upload/import the CSV data into database successfully: ${fileName}`
+    });
   };
 
   public update = async (req: Request, res: Response) => {
