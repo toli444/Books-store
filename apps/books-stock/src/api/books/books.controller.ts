@@ -9,7 +9,6 @@ import {
 } from "./book.schema";
 import BooksService from "./books.service";
 import { AppError, HttpStatusCode } from "../../utils/AppError";
-import { readDataFromCsvFile } from "./utils";
 import fs from "fs";
 import path from "path";
 
@@ -53,11 +52,7 @@ class BooksController {
 
     const filePath = path.join(req.file.destination, req.file.filename);
     const fileName = req.file.originalname;
-    const csvData = await readDataFromCsvFile<{
-      name: string;
-      authorFirstName: string;
-      authorLastName: string;
-    }>({ filePath });
+    const csvData = await this.booksService.readBooksFromCsv({ filePath });
 
     await this.booksService.createMany(csvData);
 

@@ -4,18 +4,11 @@ import { container } from "../../inversify.config";
 import BooksController from "./books.controller";
 import { authorize } from "../../middlewares/auth.middleware";
 import { UserRoles } from "../auth/auth.types";
-import multer from "multer";
-import { multerStorage, multerCsvFilter } from "./utils";
+import { upload } from "../../multer";
 
 const router = express.Router();
 
 const booksController = container.get(BooksController);
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerCsvFilter
-});
 
 router
   .get("/", booksController.get)

@@ -12,14 +12,6 @@ import cookieParser from "cookie-parser";
 import { container } from "./inversify.config";
 import JwtStrategy from "./api/auth/jwt.strategy";
 
-/* eslint-disable no-var */
-declare global {
-  var __basedir: string;
-}
-/* eslint-enable */
-
-global.__basedir = __dirname;
-
 const jwtStrategy = container.get(JwtStrategy);
 const port = process.env.PORT || 3000;
 const app = express();
@@ -61,14 +53,14 @@ main().catch(async (e) => {
 });
 
 process.on("uncaughtException", (error, origin) => {
-  console.log("----- Uncaught exception -----");
+  console.log("Uncaught exception:\n");
   console.log(error);
-  console.log("----- Exception origin -----");
+  console.log("Exception origin:\n");
   console.log(origin);
 });
 process.on("unhandledRejection", (reason, promise) => {
-  console.log("----- Unhandled Rejection at -----");
+  console.log("Unhandled Rejection at:\n");
   console.log(promise);
-  console.log("----- Reason -----");
+  console.log("Reason:\n");
   console.log(reason);
 });
