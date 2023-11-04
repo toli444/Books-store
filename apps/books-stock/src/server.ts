@@ -9,12 +9,12 @@ import errorHandler from "./middlewares/errorHandler.middleware";
 import passport from "passport";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { container } from "./inversify.config";
+import { container } from "./config/inversify.config";
 import JwtStrategy from "./api/auth/jwt.strategy";
 
 const jwtStrategy = container.get(JwtStrategy);
 const port = process.env.PORT || 3000;
-const app = express();
+export const app = express();
 
 export const prisma = new PrismaClient({
   log: process.env.DEBUG === "ON" ? ["query"] : undefined

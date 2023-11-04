@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
 import AuthController from "./auth.controller";
-import { container } from "../../inversify.config";
+import { container } from "../../config/inversify.config";
 
 const router = express.Router();
 

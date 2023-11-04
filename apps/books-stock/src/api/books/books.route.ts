@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { container } from "../../inversify.config";
 import BooksController from "./books.controller";
 import { authorize } from "../../middlewares/auth.middleware";
 import { UserRoles } from "../auth/auth.types";
-import { upload } from "../../multer";
+import { container } from "../../config/inversify.config";
+import { upload } from "../../config/multer.config";
 
 const router = express.Router();
 
