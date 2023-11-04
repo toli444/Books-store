@@ -78,20 +78,35 @@ class BooksService {
     });
   }
 
-  public createMany(
+  public async createMany(
     books: Array<{
       name: string;
-      authorId: number;
+      authorFirstName: string;
+      authorLastName: string;
     }>
   ) {
-    return prisma.book.createMany({
-      data: books.map((book) =>
-        Prisma.validator<Prisma.BookCreateManyInput>()({
-          name: book.name,
-          authorId: book.authorId
-        })
-      )
+    await prisma.author.createMany({
+      data: books.map((book) => ({
+        firstName: book.authorFirstName,
+        lastName: book.authorLastName
+      })),
+      skipDuplicates: true
     });
+
+    return prisma.$queryRaw`
+      INSERT INTO "Book" ("name", "authorId")
+      VALUES ${Prisma.join(
+        books.map(
+          (book) => Prisma.sql`
+          (
+            ${Prisma.join([
+              book.name,
+              Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`
+            ])}
+          )`
+        )
+      )}
+      ON CONFLICT DO NOTHING`;
   }
 
   public update({

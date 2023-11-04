@@ -50,7 +50,11 @@ class BooksController {
       });
     }
 
-    const csvData: Array<{ name: string; authorId: number }> = [];
+    const csvData: Array<{
+      name: string;
+      authorFirstName: string;
+      authorLastName: string;
+    }> = [];
     const filePath = __basedir + "/uploads/" + req.file.filename;
     const fileName = req.file.originalname;
 
@@ -59,9 +63,16 @@ class BooksController {
       .on("error", (error) => {
         throw error.message;
       })
-      .on("data", ({ name, authorId }: { name: string; authorId: string }) => {
-        csvData.push({ name, authorId: parseInt(authorId, 10) });
-      })
+      .on(
+        "data",
+        (data: {
+          name: string;
+          authorFirstName: string;
+          authorLastName: string;
+        }) => {
+          csvData.push(data);
+        }
+      )
       .on("end", () => {
         // insertMany csvData
         void this.booksService.createMany(csvData).then(() => {

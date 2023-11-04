@@ -27,7 +27,7 @@ router
     booksController.createWithAuthorInfo
   )
   .post(
-    "/upload-csv",
+    "/from-csv",
     authorize(UserRoles.ADMIN),
     upload.single("file"),
     booksController.createFromCSV

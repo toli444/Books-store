@@ -12,21 +12,23 @@ import cookieParser from "cookie-parser";
 import { container } from "./inversify.config";
 import JwtStrategy from "./api/auth/jwt.strategy";
 
+/* eslint-disable no-var */
 declare global {
-  // eslint-disable-next-line no-var
   var __basedir: string;
 }
+/* eslint-enable */
+
+global.__basedir = __dirname;
 
 const jwtStrategy = container.get(JwtStrategy);
-
-export const prisma = new PrismaClient();
-
-dotenv.config();
-
 const port = process.env.PORT || 3000;
 const app = express();
 
-global.__basedir = __dirname;
+export const prisma = new PrismaClient({
+  log: process.env.DEBUG === "ON" ? ["query"] : undefined
+});
+
+dotenv.config();
 
 async function main() {
   app.use(express.json());
@@ -45,55 +47,28 @@ async function main() {
     res.status(404).json({ error: `Route ${req.originalUrl} not found` });
   });
 
+  await prisma.$connect();
+
   app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
-
-  await testDB();
 }
 
-main()
-  .then(async () => {
-    await prisma.$connect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
-process.on("unhandledRejection", (reason: Error | any) => {
-  throw new Error(reason?.message || reason);
+main().catch(async (e) => {
+  console.error(e);
+  await prisma.$disconnect();
+  process.exit(1);
 });
 
-async function testDB() {
-  // await prisma.book.create({
-  //   data: {
-  //     name: "The Alchemist",
-  //     author: {
-  //       create: {
-  //         firstName: "Paulo",
-  //         lastName: "Coelho"
-  //       }
-  //     }
-  //   }
-  // });
-
-  const allBooks = await prisma.book.findMany({
-    include: {
-      author: true
-    }
-  });
-
-  console.log("ALL BOOKS: ", allBooks);
-
-  // await prisma.author.create({
-  //   data: {
-  //     name: "Miguel de Cervantes"
-  //   }
-  // });
-
-  const allAuthors = await prisma.author.findMany();
-
-  console.log("ALL AUTHORS: ", allAuthors);
-}
+process.on("uncaughtException", (error, origin) => {
+  console.log("----- Uncaught exception -----");
+  console.log(error);
+  console.log("----- Exception origin -----");
+  console.log(origin);
+});
+process.on("unhandledRejection", (reason, promise) => {
+  console.log("----- Unhandled Rejection at -----");
+  console.log(promise);
+  console.log("----- Reason -----");
+  console.log(reason);
+});
