@@ -12,6 +12,7 @@
     "serve": "node dist/index.js",
     "dev": "nodemon",
     "test": "jest",
+    "test:db:start": "docker-compose -f docker-compose.test.yml --env-file .env.test up -d",
     "db:migrate": "npx prisma migrate dev --name user-entity --create-only && npx prisma generate",
     "db:push": "npx prisma db push",
     "db:start": "docker-compose up -d",

@@ -16,9 +16,7 @@ const jwtStrategy = container.get(JwtStrategy);
 const port = process.env.PORT || 3000;
 export const app = express();
 
-export const prisma = new PrismaClient({
-  log: process.env.DEBUG === "ON" ? ["query"] : undefined
-});
+export const prisma = new PrismaClient();
 
 dotenv.config();
 
@@ -42,7 +40,7 @@ async function main() {
   await prisma.$connect();
 
   app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    // console.log(`Server running at http://localhost:${port}`);
   });
 }
 
