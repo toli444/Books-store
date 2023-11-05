@@ -2,8 +2,7 @@
   "name": "books-stock",
   "version": "1.0.0",
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=7.5.1"
+    "node": ">=18"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -14,6 +13,9 @@
     "test": "jest",
     "test:db:start": "docker-compose -f docker-compose.test.yml up -d",
     "test:db:stop": "docker-compose -f docker-compose.test.yml down",
+    "test:db:migrate": "dotenv -e .env.test npx prisma migrate dev --name user-entity --create-only && npx prisma generate",
+    "test:db:reset": "dotenv -e .env.test npx prisma migrate reset -- --force -- --skip-seed",
+    "test:db:gui": "dotenv -e .env.test npx prisma studio",
     "db:migrate": "npx prisma migrate dev --name user-entity --create-only && npx prisma generate",
     "db:push": "npx prisma db push",
     "db:start": "docker-compose up -d",
