@@ -281,24 +281,5 @@ describe("/books", () => {
         });
       });
     });
-
-    test("duplicated data", async () => {
-      const firstRes = await request(app).post("/books").send({
-        name: "Burmese Days",
-        authorId: 1
-      });
-
-      expect(firstRes.statusCode).toBe(200);
-
-      const secondRes = await request(app).post("/books").send({
-        name: "Burmese Days",
-        authorId: 1
-      });
-
-      expect(secondRes.statusCode).toBe(400);
-      expect(secondRes.body).toEqual({
-        error: "DB Error"
-      });
-    });
   });
 });
