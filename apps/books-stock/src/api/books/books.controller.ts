@@ -64,13 +64,13 @@ class BooksController {
   };
 
   public update = async (req: Request, res: Response) => {
-    const data = updateBookSchema.parse(req.body);
+    const data = updateBookSchema.parse({ ...req.body, ...req.params });
     const book = await this.booksService.update(data);
     res.json(book);
   };
 
   public patch = async (req: Request, res: Response) => {
-    const data = patchBookSchema.parse(req.body);
+    const data = patchBookSchema.parse({ ...req.body, ...req.params });
     const book = await this.booksService.patch(data);
     res.json(book);
   };

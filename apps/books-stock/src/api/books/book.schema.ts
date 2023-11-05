@@ -25,10 +25,8 @@ export const createBookWithAuthorInfoSchema = createBookCommonSchema.extend({
   })
 });
 
-export const updateBookSchema = object({
-  bookId: coerce.number(),
-  name: string(),
-  authorId: coerce.number()
+export const updateBookSchema = createBookWithAuthorIdSchema.extend({
+  bookId: coerce.number()
 });
 
 export const patchBookSchema = object({
