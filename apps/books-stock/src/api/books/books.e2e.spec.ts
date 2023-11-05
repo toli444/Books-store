@@ -19,10 +19,6 @@ describe("Books", () => {
   });
 
   afterAll(async () => {
-    const deleteBooks = prisma.book.deleteMany();
-    const deleteAuthors = prisma.author.deleteMany();
-
-    await prisma.$transaction([deleteBooks, deleteAuthors]);
     await prisma.$disconnect();
   });
 

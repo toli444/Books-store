@@ -8,5 +8,8 @@ module.exports = {
   moduleFileExtensions: ["js", "ts", "tsx"],
   preset: "ts-jest",
   roots: ["<rootDir>/src"],
+  "setupFiles": [
+    "<rootDir>/jest/setEnvVars.js"
+  ],
   testEnvironment: "node"
 };
