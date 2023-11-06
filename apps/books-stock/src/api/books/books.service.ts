@@ -1,8 +1,8 @@
-import { injectable } from "inversify";
-import { Prisma } from "@prisma/client";
-import { prisma } from "../../server";
-import { PathLike } from "fs";
-import { readDataFromCsvFile } from "../../utils/readFromCsv.util";
+import { injectable } from 'inversify';
+import { Prisma } from '@prisma/client';
+import { prisma } from '../../server';
+import { PathLike } from 'fs';
+import { readDataFromCsvFile } from '../../utils/readFromCsv.util';
 
 @injectable()
 class BooksService {

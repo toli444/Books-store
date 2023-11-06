@@ -1,4 +1,4 @@
-import { app, prisma } from "./server";
+import { app, prisma } from './server';
 
 const port = process.env.PORT || 3000;
 
@@ -16,15 +16,15 @@ start().catch(async (e) => {
   process.exit(1);
 });
 
-process.on("uncaughtException", (error, origin) => {
-  console.log("Uncaught exception:\n");
+process.on('uncaughtException', (error, origin) => {
+  console.log('Uncaught exception:\n');
   console.log(error);
-  console.log("Exception origin:\n");
+  console.log('Exception origin:\n');
   console.log(origin);
 });
-process.on("unhandledRejection", (reason, promise) => {
-  console.log("Unhandled Rejection at:\n");
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:\n');
   console.log(promise);
-  console.log("Reason:\n");
+  console.log('Reason:\n');
   console.log(reason);
 });

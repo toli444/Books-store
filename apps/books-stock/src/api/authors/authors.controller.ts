@@ -1,7 +1,7 @@
-import { injectable } from "inversify";
-import { Request, Response } from "express";
-import { authorIdSchema } from "./author.schema";
-import AuthorsService from "./authors.service";
+import { injectable } from 'inversify';
+import { Request, Response } from 'express';
+import { authorIdSchema } from './author.schema';
+import AuthorsService from './authors.service';
 
 @injectable()
 class AuthorsController {

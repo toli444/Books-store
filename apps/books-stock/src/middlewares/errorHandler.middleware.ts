@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { Prisma } from "@prisma/client";
-import { AppError, HttpStatusCode } from "../utils/AppError";
-import { ZodError } from "zod";
+import { NextFunction, Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
+import { AppError, HttpStatusCode } from '../utils/AppError';
+import { ZodError } from 'zod';
 
 const errorHandler = (
   error: Error,
@@ -24,11 +24,11 @@ const errorHandler = (
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     return res.status(HttpStatusCode.BAD_REQUEST).json({
-      error: error.meta?.cause || "DB Error"
+      error: error.meta?.cause || 'DB Error'
     });
   }
 
-  console.log("Error: ", error);
+  console.log('Error: ', error);
 
   res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     error: "Internal server error'"

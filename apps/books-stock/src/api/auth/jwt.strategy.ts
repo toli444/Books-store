@@ -1,7 +1,7 @@
-import { decorate, injectable } from "inversify";
-import { Strategy, ExtractJwt } from "passport-jwt";
-import UsersService from "../users/users.service";
-import { Request } from "express";
+import { decorate, injectable } from 'inversify';
+import { Strategy, ExtractJwt } from 'passport-jwt';
+import UsersService from '../users/users.service';
+import { Request } from 'express';
 
 interface IRequest extends Request {
   cookies: {

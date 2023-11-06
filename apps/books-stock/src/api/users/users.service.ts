@@ -1,8 +1,8 @@
-import { injectable } from "inversify";
-import { accessTokenExpiresIn } from "../../config/defaults";
-import jwt from "jsonwebtoken";
-import { prisma } from "../../server";
-import { Prisma } from "@prisma/client";
+import { injectable } from 'inversify';
+import { accessTokenExpiresIn } from '../../config/defaults';
+import jwt from 'jsonwebtoken';
+import { prisma } from '../../server';
+import { Prisma } from '@prisma/client';
 
 @injectable()
 class UsersService {

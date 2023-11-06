@@ -1,5 +1,5 @@
-import fs, { PathLike } from "fs";
-import * as csv from "fast-csv";
+import fs, { PathLike } from 'fs';
+import * as csv from 'fast-csv';
 
 export const readDataFromCsvFile = <DataT>({
   filePath
@@ -11,12 +11,12 @@ export const readDataFromCsvFile = <DataT>({
   return new Promise<Array<DataT>>((resolve) => {
     fs.createReadStream(filePath)
       .pipe(csv.parse({ headers: true }))
-      .on("error", (error) => {
+      .on('error', (error) => {
         throw error.message;
       })
-      .on("data", (data: DataT) => {
+      .on('data', (data: DataT) => {
         csvData.push(data);
       })
-      .on("end", () => resolve(csvData));
+      .on('end', () => resolve(csvData));
   });
 };

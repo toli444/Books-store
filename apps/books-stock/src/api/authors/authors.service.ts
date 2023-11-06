@@ -1,5 +1,5 @@
-import { injectable } from "inversify";
-import { prisma } from "../../server";
+import { injectable } from 'inversify';
+import { prisma } from '../../server';
 
 @injectable()
 class BooksService {

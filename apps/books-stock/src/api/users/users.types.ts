@@ -1,4 +1,4 @@
-import { UserRoles } from "../auth/auth.types";
+import { UserRoles } from '../auth/auth.types';
 
 export interface IUser {
   id: number;

@@ -1,16 +1,16 @@
-import { injectable } from "inversify";
-import { Request, Response } from "express";
+import { injectable } from 'inversify';
+import { Request, Response } from 'express';
 import {
   bookIdSchema,
   createBookWithAuthorIdSchema,
   createBookWithAuthorInfoSchema,
   updateBookSchema,
   patchBookSchema
-} from "./book.schema";
-import BooksService from "./books.service";
-import { AppError, HttpStatusCode } from "../../utils/AppError";
-import fs from "fs";
-import path from "path";
+} from './book.schema';
+import BooksService from './books.service';
+import { AppError, HttpStatusCode } from '../../utils/AppError';
+import fs from 'fs';
+import path from 'path';
 
 @injectable()
 class BooksController {
@@ -46,7 +46,7 @@ class BooksController {
     if (!req.file) {
       throw new AppError({
         statusCode: HttpStatusCode.BAD_REQUEST,
-        message: "Please upload a CSV file."
+        message: 'Please upload a CSV file.'
       });
     }
 
