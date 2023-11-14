@@ -11,8 +11,8 @@ const router = express.Router();
 const booksController = container.get(BooksController);
 
 router
-  .get('/', booksController.get)
-  .get('/:bookId', booksController.getOne)
+  .get('/', booksController.findAll)
+  .get('/:bookId', booksController.findOne)
   .post('/', authorize(UserRoles.ADMIN), booksController.create)
   .post(
     '/with-author-info',

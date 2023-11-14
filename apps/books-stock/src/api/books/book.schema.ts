@@ -1,6 +1,6 @@
 import { object, string, coerce } from 'zod';
 
-export const bookIdSchema = object({
+export const findBookParamsSchema = object({
   bookId: coerce.number()
 });
 
@@ -25,12 +25,9 @@ export const createBookWithAuthorInfoSchema = createBookCommonSchema.extend({
   })
 });
 
-export const updateBookSchema = createBookWithAuthorIdSchema.extend({
-  bookId: coerce.number()
-});
+export const updateBookSchema = createBookWithAuthorIdSchema;
 
 export const patchBookSchema = object({
-  bookId: coerce.number(),
   name: string().optional(),
   authorId: coerce.number().optional()
 });

@@ -6,7 +6,7 @@ import { readDataFromCsvFile } from '../../utils/readFromCsv.util';
 
 @injectable()
 class BooksService {
-  public getOne({ bookId }: { bookId: number }) {
+  public findOne({ bookId }: { bookId: number }) {
     return prisma.book.findUnique({
       where: {
         id: bookId
@@ -17,7 +17,7 @@ class BooksService {
     });
   }
 
-  public getMany() {
+  public findAll() {
     return prisma.book.findMany({
       include: {
         author: true

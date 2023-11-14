@@ -1,11 +1,9 @@
 import { app, prisma } from './server';
 
-const port = process.env.PORT || 3000;
-
 async function start() {
   await prisma.$connect();
 
-  app.listen(port, () => {
+  app.listen(process.env.PORT, () => {
     // console.log(`Server running at http://localhost:${port}`);
   });
 }

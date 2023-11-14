@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { Request, Response } from 'express';
 import {
-  bookIdSchema,
+  findBookParamsSchema,
   createBookWithAuthorIdSchema,
   createBookWithAuthorInfoSchema,
   updateBookSchema,
@@ -19,14 +19,14 @@ class BooksController {
   public constructor(booksService: BooksService) {
     this.booksService = booksService;
   }
-  public get = async (req: Request, res: Response) => {
-    const books = await this.booksService.getMany();
+  public findAll = async (req: Request, res: Response) => {
+    const books = await this.booksService.findAll();
     res.json(books);
   };
 
-  public getOne = async (req: Request, res: Response) => {
-    const data = bookIdSchema.parse(req.params);
-    const book = await this.booksService.getOne(data);
+  public findOne = async (req: Request, res: Response) => {
+    const data = findBookParamsSchema.parse(req.params);
+    const book = await this.booksService.findOne(data);
     res.json(book);
   };
 
@@ -64,19 +64,21 @@ class BooksController {
   };
 
   public update = async (req: Request, res: Response) => {
-    const data = updateBookSchema.parse({ ...req.body, ...req.params });
-    const book = await this.booksService.update(data);
+    const { bookId } = findBookParamsSchema.parse(req.params);
+    const data = updateBookSchema.parse(req.body);
+    const book = await this.booksService.update({ bookId, ...data });
     res.json(book);
   };
 
   public patch = async (req: Request, res: Response) => {
-    const data = patchBookSchema.parse({ ...req.body, ...req.params });
-    const book = await this.booksService.patch(data);
+    const { bookId } = findBookParamsSchema.parse(req.params);
+    const data = patchBookSchema.parse(req.body);
+    const book = await this.booksService.patch({ bookId, ...data });
     res.json(book);
   };
 
   public remove = async (req: Request, res: Response) => {
-    const data = bookIdSchema.parse(req.params);
+    const data = findBookParamsSchema.parse(req.params);
     const book = await this.booksService.remove(data);
     res.json(book);
   };
