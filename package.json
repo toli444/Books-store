@@ -6,6 +6,10 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "apps:start": "./start-kafka.sh",
+    "apps:stop": "docker-compose down"
+  },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
