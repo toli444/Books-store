@@ -1,15 +1,13 @@
 import { app, prisma } from './server';
-import OrderCreatedEventConsumer from './orders/orderCreated.eventConsumer';
-import OrderProcessedEventProducer from './orders/orderProcessed.eventProducer';
-
-const orderCreatedEventConsumer = new OrderCreatedEventConsumer();
-const orderProcessedEventProducer = new OrderProcessedEventProducer();
+import {
+  orderProcessedEventProducer,
+  orderCreatedEventConsumer
+} from './config/kafka.config';
 
 async function start() {
   await prisma.$connect();
   await orderCreatedEventConsumer.start();
   await orderProcessedEventProducer.start();
-  await orderProcessedEventProducer.sendOrderProcessedEvent('1', 'Hello');
 
   app.listen(process.env.PORT, () => {
     // console.log(`Server running at http://localhost:${port}`);

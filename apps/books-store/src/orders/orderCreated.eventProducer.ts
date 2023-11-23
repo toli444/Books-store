@@ -2,7 +2,8 @@ import { Kafka, Producer } from 'kafkajs';
 import { address as ipAddress } from 'ip';
 
 const host = process.env.HOST_IP || ipAddress();
-export default class OrderProcessedEventProducer {
+
+export default class OrderCreatedEventProducer {
   private producer: Producer;
 
   constructor() {
@@ -21,9 +22,9 @@ export default class OrderProcessedEventProducer {
     await this.producer.disconnect();
   }
 
-  public async sendOrderProcessedEvent(orderId: string, order = 'Hello') {
+  public async sendOrderCreatedEvent(orderId: string, order = 'Hello') {
     await this.producer.send({
-      topic: 'order-processed',
+      topic: 'order-created',
       messages: [{ key: orderId, value: order }]
     });
   }
