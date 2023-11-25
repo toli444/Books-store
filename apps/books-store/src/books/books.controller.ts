@@ -1,9 +1,9 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AccessTokenGuard } from '../common/guards/accessToken.guard';
-import { RoleGuard } from '../common/guards/role.guard';
 import { BooksService } from './books.service';
 import { Roles } from '../auth/roles/roles.decorator';
 import { UserRoles } from '../users/types/user.type';
+import { RoleGuard } from '../common/guards/role.guard';
 
 @Controller('books')
 export class BooksController {
@@ -17,8 +17,8 @@ export class BooksController {
 
   @Roles(UserRoles.ADMIN)
   @UseGuards(AccessTokenGuard, RoleGuard)
-  @Post('order')
-  order() {
-    return this.booksService.order();
+  @Get('admin')
+  adminGet() {
+    return this.booksService.findAll();
   }
 }

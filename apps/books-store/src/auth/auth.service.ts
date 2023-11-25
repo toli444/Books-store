@@ -26,7 +26,7 @@ export class AuthService {
     const userExists = await this.usersService.findByEmail(createUserDto.email);
 
     if (userExists) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException('User already exists.');
     }
 
     const hashedPassword = await this.hashData(createUserDto.password);
@@ -46,7 +46,7 @@ export class AuthService {
     const user = await this.usersService.findByEmail(data.email);
 
     if (!user) {
-      throw new BadRequestException('Invalid username or password');
+      throw new BadRequestException('Invalid username or password.');
     }
 
     const passwordMatches = await this.compareHashes(
@@ -55,7 +55,7 @@ export class AuthService {
     );
 
     if (!passwordMatches) {
-      throw new BadRequestException('Invalid username or password');
+      throw new BadRequestException('Invalid username or password.');
     }
 
     const tokens = await this.getTokens(user);
@@ -73,7 +73,7 @@ export class AuthService {
     const user = await this.usersService.findById(userId);
 
     if (!user || !user.refreshToken) {
-      throw new ForbiddenException('Access Denied');
+      throw new ForbiddenException('Access Denied.');
     }
 
     const refreshTokenMatches = await this.compareHashes(
@@ -82,7 +82,7 @@ export class AuthService {
     );
 
     if (!refreshTokenMatches) {
-      throw new ForbiddenException('Access Denied');
+      throw new ForbiddenException('Access Denied.');
     }
 
     const tokens = await this.getTokens(user);

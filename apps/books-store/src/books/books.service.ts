@@ -14,8 +14,4 @@ export class BooksService {
 
     return data;
   }
-
-  order() {
-    return true;
-  }
 }
