@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from '../../users/schemas/user.schema';
+import { OrderStatuses } from '../types/order.types';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -11,6 +12,9 @@ export class Order {
 
   @Prop()
   items: string[];
+
+  @Prop({ type: String, enum: OrderStatuses, default: OrderStatuses.NEW })
+  status: OrderStatuses;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

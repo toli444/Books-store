@@ -37,6 +37,10 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  async findByEmailWithPassword(email: string) {
+    return this.userModel.findOne({ email }).select('+password').exec();
+  }
+
   async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
     return this.userModel.findByIdAndUpdate(id, updateUserDto);
   }

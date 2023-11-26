@@ -44,15 +44,15 @@ export class AuthService {
   }
 
   async signIn(data: SignInDto) {
-    const user = await this.usersService.findByEmail(data.email);
+    const user = await this.usersService.findByEmailWithPassword(data.email);
 
     if (!user) {
       throw new BadRequestException('Invalid username or password.');
     }
 
-    const passwordMatches = await this.compareHashes(
-      user.password,
-      data.password
+    const passwordMatches = await this.compareHash(
+      data.password,
+      user.password
     );
 
     if (!passwordMatches) {
@@ -77,9 +77,9 @@ export class AuthService {
       throw new ForbiddenException('Access Denied.');
     }
 
-    const refreshTokenMatches = await this.compareHashes(
-      user.refreshToken,
-      refreshToken
+    const refreshTokenMatches = await this.compareHash(
+      refreshToken,
+      user.refreshToken
     );
 
     if (!refreshTokenMatches) {
@@ -97,8 +97,8 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  compareHashes(hash1: string, hash2: string) {
-    return bcrypt.compare(hash1, hash2);
+  compareHash(data: string, encryptedData: string) {
+    return bcrypt.compare(data, encryptedData);
   }
 
   async updateRefreshToken(userId: Types.ObjectId, refreshToken: string) {
