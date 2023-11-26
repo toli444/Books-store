@@ -11,6 +11,7 @@ class UsersController {
   public constructor(usersService: UsersService) {
     this.usersService = usersService;
   }
+
   public get = async (req: Request, res: Response) => {
     const users = await this.usersService.getMany();
     res.json(users.map((u) => omit(u, 'password')));

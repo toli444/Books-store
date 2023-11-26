@@ -6,7 +6,6 @@ import { PrismaClient } from '@prisma/client';
 import booksRouter from './api/books/books.route';
 import authRouter from './api/auth/auth.route';
 import authorsRouter from './api/authors/authors.route';
-import statusRouter from './api/status/status.route';
 import errorHandler from './middlewares/errorHandler.middleware';
 import passport from 'passport';
 import cors from 'cors';
@@ -31,7 +30,6 @@ app.use(passport.initialize());
 app.use('/auth', authRouter);
 app.use('/books', booksRouter);
 app.use('/authors', authorsRouter);
-app.use('/status', statusRouter);
 
 app.use(errorHandler);
 

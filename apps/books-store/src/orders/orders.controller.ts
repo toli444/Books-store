@@ -10,10 +10,12 @@ export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Post()
-  get() {
-    return this.ordersService.placeOrder(
+  async placeOrder() {
+    await this.ordersService.placeOrder(
       `${getRandomInt(100000)}`,
       `Hello ${getRandomInt(100000)}`
     );
+
+    return 'Order placed';
   }
 }

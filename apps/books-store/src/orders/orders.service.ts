@@ -6,7 +6,7 @@ import { ProducerService } from '../kafka/producer.service';
 export class OrdersService implements OnModuleInit {
   constructor(
     private readonly consumerService: ConsumerService,
-    private readonly providerService: ProducerService
+    private readonly producerService: ProducerService
   ) {}
 
   async onModuleInit() {
@@ -27,7 +27,7 @@ export class OrdersService implements OnModuleInit {
   }
 
   placeOrder(orderId: string, order = 'Hello') {
-    return this.providerService.produce({
+    return this.producerService.produce({
       topic: 'order-created',
       messages: [{ key: orderId, value: order }]
     });

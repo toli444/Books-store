@@ -1,13 +1,17 @@
 import { app, prisma } from './server';
-import {
-  orderProcessedEventProducer,
-  orderCreatedEventConsumer
-} from './config/kafka.config';
+import { container } from './config/inversify.config';
+import ProducerService from './kafka/producer.service';
+import ConsumerService from './kafka/consumer.service';
+import OrdersService from './api/orders/orders.service';
+
+const producerService = container.get(ProducerService);
+const consumerService = container.get(ConsumerService);
+const ordersService = container.get(OrdersService);
 
 async function start() {
   await prisma.$connect();
-  await orderCreatedEventConsumer.start();
-  await orderProcessedEventProducer.start();
+  await producerService.init();
+  await ordersService.init();
 
   app.listen(process.env.PORT, () => {
     // console.log(`Server running at http://localhost:${port}`);
@@ -16,8 +20,8 @@ async function start() {
 
 start().catch(async (e) => {
   console.error(e);
-  await orderCreatedEventConsumer.shutdown();
-  await orderProcessedEventProducer.shutdown();
+  await producerService.shutdown();
+  await consumerService.shutdown();
   await prisma.$disconnect();
   process.exit(1);
 });

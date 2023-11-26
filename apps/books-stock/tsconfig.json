@@ -9,7 +9,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": ["reflect-metadata", "jest"],
-    "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist"
   },

@@ -2,9 +2,7 @@ import { injectable } from 'inversify';
 
 @injectable()
 class AuthService {
-  public getMany() {
-    return prisma.user.findMany();
-  }
+  public getMany() {}
 }
 
 export default AuthService;

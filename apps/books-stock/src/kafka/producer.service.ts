@@ -1,31 +1,27 @@
-import {
-  Injectable,
-  OnApplicationShutdown,
-  OnModuleInit
-} from '@nestjs/common';
 import { Kafka, Producer, ProducerRecord } from 'kafkajs';
 import { address as ipAddress } from 'ip';
+import { injectable } from 'inversify';
 
 const host = process.env.HOST_IP || ipAddress();
 
-@Injectable()
-export class ProducerService implements OnModuleInit, OnApplicationShutdown {
+@injectable()
+export default class ProducerService {
   private producer: Producer;
 
   constructor() {
     this.producer = this.createProducer();
   }
 
-  async onModuleInit() {
-    await this.producer.connect();
+  init() {
+    return this.producer.connect();
   }
 
-  async onApplicationShutdown() {
-    await this.producer.disconnect();
+  shutdown() {
+    return this.producer.disconnect();
   }
 
-  async produce(record: ProducerRecord) {
-    await this.producer.send(record);
+  produce(record: ProducerRecord) {
+    return this.producer.send(record);
   }
 
   private createProducer(): Producer {
