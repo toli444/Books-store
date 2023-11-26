@@ -21,4 +21,4 @@ container.bind<AuthorsController>(AuthorsController).toSelf();
 container.bind<AuthorsService>(AuthorsService).toSelf();
 container.bind<ConsumerService>(ConsumerService).toSelf().inSingletonScope();
 container.bind<ProducerService>(ProducerService).toSelf().inSingletonScope();
-container.bind<OrdersService>(OrdersService).toSelf();
+container.bind<OrdersService>(OrdersService).toSelf().inSingletonScope();

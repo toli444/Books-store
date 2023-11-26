@@ -1,21 +1,13 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
-}
+import { PlaceOrderDto } from './dtos/place-order.dto';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Post()
-  async placeOrder() {
-    await this.ordersService.placeOrder(
-      `${getRandomInt(100000)}`,
-      `Hello ${getRandomInt(100000)}`
-    );
-
-    return 'Order placed';
+  placeOrder(@Body() placeOrderDto: PlaceOrderDto) {
+    return this.ordersService.placeOrder(placeOrderDto);
   }
 }

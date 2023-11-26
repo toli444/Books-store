@@ -1,59 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from './schemas/user.schema';
+import { Model, Types } from 'mongoose';
+import { UserRoles } from './types/user.type';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { User, UserRoles } from './types/user.type';
-
-let id = 3;
 
 @Injectable()
 export class UsersService {
-  private readonly users: Array<User> = [
-    {
-      id: 1,
-      email: 'john@email.com',
-      password: 'changeme123',
-      role: UserRoles.CUSTOMER
-    },
-    {
-      id: 2,
-      email: 'maria@email.com',
-      password: 'guess123',
-      role: UserRoles.CUSTOMER
-    }
-  ];
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findById(id: number) {
-    return this.users.find((user) => user.id === id);
+  create(createUserDto: CreateUserDto) {
+    const createdUser = new this.userModel({
+      ...createUserDto,
+      role: UserRoles.CUSTOMER
+    });
+
+    return createdUser.save();
+  }
+
+  async findAll() {
+    return this.userModel.find().exec();
+  }
+
+  async findById(id: Types.ObjectId) {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with provided id not found.`);
+    }
+
+    return user;
   }
 
   async findByEmail(email: string) {
-    return this.users.find((user) => user.email === email);
+    return this.userModel.findOne({ email }).exec();
   }
 
-  async create(createUserDto: CreateUserDto) {
-    const createdUser = {
-      id: id++,
-      role: UserRoles.CUSTOMER,
-      ...createUserDto
-    };
-
-    this.users.push(createdUser);
-
-    return createdUser;
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-
-    if (userIndex === -1) {
-      return;
-    }
-
-    this.users[userIndex] = {
-      ...this.users[userIndex],
-      ...updateUserDto
-    };
-
-    return this.users[userIndex];
+  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+    return this.userModel.findByIdAndUpdate(id, updateUserDto);
   }
 }

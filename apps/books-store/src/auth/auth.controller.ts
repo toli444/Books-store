@@ -27,7 +27,7 @@ export class AuthController {
   logout(@Req() req: Request) {
     const user = req.user as User;
 
-    return this.authService.logout(user.id);
+    return this.authService.logout(user._id);
   }
 
   @UseGuards(RefreshTokenGuard)

@@ -9,7 +9,7 @@ export class BooksService {
 
   async findAll() {
     const { data } = await firstValueFrom(
-      this.httpService.get<Book[]>('http://localhost:8000/books')
+      this.httpService.get<Book[]>(`${process.env.BOOKS_STOCK_URL}/books`)
     );
 
     return data;

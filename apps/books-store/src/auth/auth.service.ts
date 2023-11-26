@@ -9,9 +9,10 @@ import { SignInDto } from './dtos/signIn.dto';
 import { SignUpDto } from './dtos/signUp.dto';
 import * as process from 'process';
 import * as bcrypt from 'bcrypt';
+import { Types } from 'mongoose';
 
 interface UserI {
-  id: number;
+  _id: Types.ObjectId;
   email: string;
 }
 
@@ -37,7 +38,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(newUser);
 
-    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    await this.updateRefreshToken(newUser._id, tokens.refreshToken);
 
     return tokens;
   }
@@ -60,16 +61,16 @@ export class AuthService {
 
     const tokens = await this.getTokens(user);
 
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    await this.updateRefreshToken(user._id, tokens.refreshToken);
 
     return tokens;
   }
 
-  logout(userId: number) {
+  logout(userId: Types.ObjectId) {
     return this.usersService.update(userId, { refreshToken: null });
   }
 
-  async refreshTokens(userId: number, refreshToken: string) {
+  async refreshTokens(userId: Types.ObjectId, refreshToken: string) {
     const user = await this.usersService.findById(userId);
 
     if (!user || !user.refreshToken) {
@@ -87,7 +88,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(user);
 
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    await this.updateRefreshToken(user._id, tokens.refreshToken);
 
     return tokens;
   }
@@ -100,7 +101,7 @@ export class AuthService {
     return bcrypt.compare(hash1, hash2);
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string) {
+  async updateRefreshToken(userId: Types.ObjectId, refreshToken: string) {
     const hashedRefreshToken = await this.hashData(refreshToken);
 
     return this.usersService.update(userId, {
@@ -108,11 +109,11 @@ export class AuthService {
     });
   }
 
-  async getTokens({ id, email }: UserI) {
+  async getTokens({ _id, email }: UserI) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: id,
+          sub: _id,
           email
         },
         {
@@ -122,7 +123,7 @@ export class AuthService {
       ),
       this.jwtService.signAsync(
         {
-          sub: id,
+          sub: _id,
           email
         },
         {

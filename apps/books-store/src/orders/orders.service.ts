@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConsumerService } from '../kafka/consumer.service';
 import { ProducerService } from '../kafka/producer.service';
+import { PlaceOrderDto } from './dtos/place-order.dto';
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -26,10 +27,10 @@ export class OrdersService implements OnModuleInit {
     );
   }
 
-  placeOrder(orderId: string, order = 'Hello') {
-    return this.producerService.produce({
-      topic: 'order-created',
-      messages: [{ key: orderId, value: order }]
-    });
+  async placeOrder(placeOrderDto: PlaceOrderDto) {
+    // return this.producerService.produce({
+    //   topic: 'order-created',
+    //   messages: [{ key: orderId, value: order }]
+    // });
   }
 }

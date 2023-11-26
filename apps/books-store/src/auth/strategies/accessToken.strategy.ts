@@ -2,9 +2,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../../users/users.service';
+import { Types } from 'mongoose';
 
 type JwtPayload = {
-  sub: number;
+  sub: Types.ObjectId;
   email: string;
 };
 
