@@ -12,21 +12,3 @@ To install the monorepo and all of its dependencies, run the following command a
 ```sh
 npm install
 ```
-
-## Start book_stock app
-
-```sh
-cd ./apps/books-stock
-```
-
-In this folder create an `.env` file and declare env variables by following `.env.example` example. 
-
-Then:
-
-```sh
-docker-compose up -d
-```
-
-```sh
-npm run dev
-```
