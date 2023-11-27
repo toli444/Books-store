@@ -6,6 +6,7 @@ import {
   ConsumerRunConfig
 } from 'kafkajs';
 import { address as ipAddress } from 'ip';
+import { v4 as uuid } from 'uuid';
 
 const host = process.env.HOST_IP || ipAddress();
 
@@ -31,7 +32,7 @@ export class ConsumerService implements OnApplicationShutdown {
       brokers: [`${host}:9092`]
     });
 
-    return kafka.consumer({ groupId: 'books' });
+    return kafka.consumer({ groupId: `books-${uuid()}` });
   }
 
   async onApplicationShutdown() {

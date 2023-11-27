@@ -14,4 +14,14 @@ export class BooksService {
 
     return data;
   }
+
+  async findByIds(ids) {
+    const { data } = await firstValueFrom(
+      this.httpService.get<Book[]>(
+        `${process.env.BOOKS_STOCK_URL}/books/${ids}`
+      )
+    );
+
+    return data;
+  }
 }

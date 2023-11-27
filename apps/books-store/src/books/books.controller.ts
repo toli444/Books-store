@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AccessTokenGuard } from '../common/guards/accessToken.guard';
 import { BooksService } from './books.service';
 import { Roles } from '../auth/roles/roles.decorator';
@@ -13,6 +13,12 @@ export class BooksController {
   @Get()
   get() {
     return this.booksService.findAll();
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get()
+  getByIds(@Param('ids') ids: string) {
+    return this.booksService.findByIds(ids);
   }
 
   @Roles(UserRoles.ADMIN)

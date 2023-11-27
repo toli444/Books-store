@@ -6,6 +6,7 @@ import {
 } from 'kafkajs';
 import { address as ipAddress } from 'ip';
 import { injectable } from 'inversify';
+import { v4 as uuid } from 'uuid';
 
 const host = process.env.HOST_IP || ipAddress();
 
@@ -35,6 +36,6 @@ export default class ConsumerService {
       brokers: [`${host}:9092`]
     });
 
-    return kafka.consumer({ groupId: 'books' });
+    return kafka.consumer({ groupId: `books-${uuid()}` });
   }
 }

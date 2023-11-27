@@ -3,7 +3,7 @@ import { ConsumerService } from '../kafka/consumer.service';
 import { ProducerService } from '../kafka/producer.service';
 import { PlaceOrderDto } from './dtos/place-order.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Order, OrderDocument } from './schemas/order.schema';
 
 @Injectable()
@@ -31,10 +31,21 @@ export class OrdersService implements OnModuleInit {
     );
   }
 
+  findOneForCustomer(customerId: Types.ObjectId, orderId: Types.ObjectId) {
+    return this.orderModel.find({
+      _id: orderId,
+      customer: { _id: customerId }
+    });
+  }
+
+  findAllForCustomer(customerId: Types.ObjectId) {
+    return this.orderModel.find({ customer: { _id: customerId } });
+  }
+
   async placeOrder(placeOrderDto: PlaceOrderDto) {
-    // const createdOrder = new this.orderModel(placeOrderDto);
-    //
-    // return createdOrder.save();
+    const createdOrder = new this.orderModel(placeOrderDto);
+
+    return createdOrder.save();
     // return this.producerService.produce({
     //   topic: 'order-created',
     //   messages: [{ key: orderId, value: order }]
