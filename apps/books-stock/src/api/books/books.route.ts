@@ -25,7 +25,6 @@ router
     upload.single('file'),
     booksController.createFromCSV
   )
-  .put('/:bookId', authorize(UserRoles.ADMIN), booksController.update)
   .patch('/:bookId', authorize(UserRoles.ADMIN), booksController.patch)
   .delete('/:bookId', authorize(UserRoles.ADMIN), booksController.remove);
 

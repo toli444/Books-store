@@ -3,7 +3,7 @@ import { prisma } from '../../server';
 
 @injectable()
 class BooksService {
-  public getBooks({ authorId }: { authorId: number }) {
+  public getBooks({ authorId }: { authorId: string }) {
     return prisma.author
       .findUnique({
         where: {

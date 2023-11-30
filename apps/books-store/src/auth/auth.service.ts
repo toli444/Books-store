@@ -118,7 +118,7 @@ export class AuthService {
         },
         {
           secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-          expiresIn: '15m'
+          expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '15m'
         }
       ),
       this.jwtService.signAsync(

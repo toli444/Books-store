@@ -31,24 +31,27 @@ export class OrdersService implements OnModuleInit {
     );
   }
 
-  findOneForCustomer(customerId: Types.ObjectId, orderId: Types.ObjectId) {
-    return this.orderModel.find({
-      _id: orderId,
-      customer: { _id: customerId }
-    });
+  findOne(orderId: Types.ObjectId) {
+    return this.orderModel.findById(orderId);
   }
 
   findAllForCustomer(customerId: Types.ObjectId) {
-    return this.orderModel.find({ customer: { _id: customerId } });
+    return this.orderModel.find({ creator: { _id: customerId } });
   }
 
-  async placeOrder(placeOrderDto: PlaceOrderDto) {
-    const createdOrder = new this.orderModel(placeOrderDto);
+  async placeOrder(customerId: Types.ObjectId, placeOrderDto: PlaceOrderDto) {
+    const createdOrder = new this.orderModel({
+      creator: customerId,
+      ...placeOrderDto
+    });
 
-    return createdOrder.save();
-    // return this.producerService.produce({
-    //   topic: 'order-created',
-    //   messages: [{ key: orderId, value: order }]
-    // });
+    const order = await createdOrder.save();
+
+    await this.producerService.produce({
+      topic: 'order-created',
+      messages: [{ key: order._id.toString(), value: JSON.stringify(order) }]
+    });
+
+    return order;
   }
 }

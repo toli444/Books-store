@@ -10,7 +10,7 @@ interface IRequest extends Request {
 }
 
 interface IJwtPayload {
-  id: number;
+  id: string;
 }
 
 const cookieExtractor = (req: IRequest) => {

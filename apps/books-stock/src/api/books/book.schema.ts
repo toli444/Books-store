@@ -1,8 +1,4 @@
-import { object, string, coerce } from 'zod';
-
-export const findBookParamsSchema = object({
-  bookId: coerce.number()
-});
+import { number, object, string } from 'zod';
 
 const createBookCommonSchema = object({
   name: string({
@@ -11,9 +7,10 @@ const createBookCommonSchema = object({
 });
 
 export const createBookWithAuthorIdSchema = createBookCommonSchema.extend({
-  authorId: coerce.number({
+  authorId: string({
     required_error: 'Author Id is required.'
-  })
+  }),
+  quantity: number().nonnegative().optional()
 });
 
 export const createBookWithAuthorInfoSchema = createBookCommonSchema.extend({
@@ -22,12 +19,12 @@ export const createBookWithAuthorInfoSchema = createBookCommonSchema.extend({
   }),
   authorLastName: string({
     required_error: 'Author last name is required.'
-  })
+  }),
+  quantity: number().nonnegative().optional()
 });
-
-export const updateBookSchema = createBookWithAuthorIdSchema;
 
 export const patchBookSchema = object({
   name: string().optional(),
-  authorId: coerce.number().optional()
+  authorId: string().optional(),
+  quantity: number().optional()
 });

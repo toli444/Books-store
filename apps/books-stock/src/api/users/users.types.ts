@@ -1,7 +1,7 @@
 import { UserRoles } from '../auth/auth.types';
 
 export interface IUser {
-  id: number;
+  id: string;
   role: UserRoles;
   email: string;
   password: string;

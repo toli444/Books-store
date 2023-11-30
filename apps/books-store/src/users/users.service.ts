@@ -11,10 +11,7 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   create(createUserDto: CreateUserDto) {
-    const createdUser = new this.userModel({
-      ...createUserDto,
-      role: UserRoles.CUSTOMER
-    });
+    const createdUser = new this.userModel(createUserDto);
 
     return createdUser.save();
   }

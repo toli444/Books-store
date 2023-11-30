@@ -1,13 +1,25 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { PlaceOrderDto } from './dtos/place-order.dto';
 import { AccessTokenGuard } from '../common/guards/accessToken.guard';
-import { User } from '../users/types/user.type';
+import { User, UserRoles } from '../users/types/user.type';
 import { Request } from 'express';
+import { convertStringToObjectId } from '../utils';
 
-@Controller('/me/orders')
+@Controller('me/orders')
 export class OrdersController {
-  constructor(private ordersService: OrdersService) {}
+  constructor(private ordersService: OrdersService) {
+    this.ordersService = ordersService;
+  }
 
   @UseGuards(AccessTokenGuard)
   @Get()
@@ -18,15 +30,30 @@ export class OrdersController {
   }
 
   @UseGuards(AccessTokenGuard)
-  @Get()
-  getOne(@Req() req: Request) {
+  @Get(':id')
+  async getOne(@Req() req: Request, @Param('id') orderId: string) {
     const user = req.user as User;
 
-    return this.ordersService.findAllForCustomer(user._id);
+    const order = await this.ordersService.findOne(
+      convertStringToObjectId(orderId)
+    );
+
+    if (!order) {
+      throw new NotFoundException();
+    }
+
+    if (user.role === UserRoles.ADMIN || user._id.equals(order.creator)) {
+      return order;
+    }
+
+    throw new NotFoundException();
   }
 
+  @UseGuards(AccessTokenGuard)
   @Post()
-  placeOrder(@Body() placeOrderDto: PlaceOrderDto) {
-    return this.ordersService.placeOrder(placeOrderDto);
+  placeOrder(@Req() req: Request, @Body() placeOrderDto: PlaceOrderDto) {
+    const user = req.user as User;
+
+    return this.ordersService.placeOrder(user._id, placeOrderDto);
   }
 }

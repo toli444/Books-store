@@ -1,10 +1,8 @@
 import { injectable } from 'inversify';
 import { Request, Response } from 'express';
 import {
-  findBookParamsSchema,
   createBookWithAuthorIdSchema,
   createBookWithAuthorInfoSchema,
-  updateBookSchema,
   patchBookSchema
 } from './book.schema';
 import BooksService from './books.service';
@@ -25,8 +23,9 @@ class BooksController {
   };
 
   public findOne = async (req: Request, res: Response) => {
-    const data = findBookParamsSchema.parse(req.params);
-    const book = await this.booksService.findOne(data);
+    const book = await this.booksService.findOne({
+      bookId: req.params.bookId
+    });
     res.json(book);
   };
 
@@ -63,23 +62,17 @@ class BooksController {
     });
   };
 
-  public update = async (req: Request, res: Response) => {
-    const { bookId } = findBookParamsSchema.parse(req.params);
-    const data = updateBookSchema.parse(req.body);
-    const book = await this.booksService.update({ bookId, ...data });
-    res.json(book);
-  };
-
   public patch = async (req: Request, res: Response) => {
-    const { bookId } = findBookParamsSchema.parse(req.params);
     const data = patchBookSchema.parse(req.body);
-    const book = await this.booksService.patch({ bookId, ...data });
+    const book = await this.booksService.patch({
+      bookId: req.params.bookId,
+      ...data
+    });
     res.json(book);
   };
 
   public remove = async (req: Request, res: Response) => {
-    const data = findBookParamsSchema.parse(req.params);
-    const book = await this.booksService.remove(data);
+    const book = await this.booksService.remove({ bookId: req.params.bookId });
     res.json(book);
   };
 }

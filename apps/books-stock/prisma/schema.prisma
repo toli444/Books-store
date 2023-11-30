@@ -9,17 +9,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
 model Book {
-  id       Int    @id @default(autoincrement())
-  name     String
-  author   Author @relation(fields: [authorId], references: [id])
-  authorId Int
+  id          String       @id @default(uuid())
+  name        String
+  author      Author       @relation(fields: [authorId], references: [id])
+  authorId    String
+  stockStatus StockStatus?
 
   @@unique([name, authorId])
 }
 
 model Author {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   firstName String
   lastName  String
   books     Book[]
@@ -27,16 +33,18 @@ model Author {
   @@unique([firstName, lastName])
 }
 
-enum Role {
-  CUSTOMER
-  ADMIN
-}
-
 model User {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
   firstName String
   lastName  String
-  role      Role   @default(CUSTOMER)
+  role      UserRole @default(CUSTOMER)
+}
+
+model StockStatus {
+  id       String @id @default(uuid())
+  item     Book   @relation(fields: [itemId], references: [id])
+  itemId   String @unique
+  quantity Int    @default(0)
 }

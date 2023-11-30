@@ -189,7 +189,7 @@ describe('/auth', () => {
       });
 
       const registerResponseBody = registerResponse.body as {
-        user: { id: number };
+        user: { id: string };
       };
 
       await prisma.user.update({

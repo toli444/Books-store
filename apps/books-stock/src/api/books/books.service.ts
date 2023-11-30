@@ -3,16 +3,18 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../../server';
 import { PathLike } from 'fs';
 import { readDataFromCsvFile } from '../../utils/readFromCsv.util';
+import { AppError, HttpStatusCode } from '../../utils/AppError';
 
 @injectable()
 class BooksService {
-  public findOne({ bookId }: { bookId: number }) {
+  public findOne({ bookId }: { bookId: string }) {
     return prisma.book.findUnique({
       where: {
         id: bookId
       },
       include: {
-        author: true
+        author: true,
+        stockStatus: true
       }
     });
   }
@@ -20,7 +22,8 @@ class BooksService {
   public findAll() {
     return prisma.book.findMany({
       include: {
-        author: true
+        author: true,
+        stockStatus: true
       }
     });
   }
@@ -28,11 +31,13 @@ class BooksService {
   public createWithAuthorInfo({
     name,
     authorFirstName,
-    authorLastName
+    authorLastName,
+    quantity = 0
   }: {
     name: string;
     authorFirstName: string;
     authorLastName: string;
+    quantity?: number;
   }) {
     return prisma.book.create({
       data: Prisma.validator<Prisma.BookCreateInput>()({
@@ -50,20 +55,28 @@ class BooksService {
               lastName: authorLastName
             }
           }
+        },
+        stockStatus: {
+          create: {
+            quantity
+          }
         }
       }),
       include: {
-        author: true
+        author: true,
+        stockStatus: true
       }
     });
   }
 
   public createWithAuthorId({
     name,
-    authorId
+    authorId,
+    quantity = 0
   }: {
     name: string;
-    authorId: number;
+    authorId: string;
+    quantity?: number;
   }) {
     return prisma.book.create({
       data: Prisma.validator<Prisma.BookCreateInput>()({
@@ -72,10 +85,16 @@ class BooksService {
           connect: {
             id: authorId
           }
+        },
+        stockStatus: {
+          create: {
+            quantity
+          }
         }
       }),
       include: {
-        author: true
+        author: true,
+        stockStatus: true
       }
     });
   }
@@ -85,6 +104,7 @@ class BooksService {
       name: string;
       authorFirstName: string;
       authorLastName: string;
+      quantity?: number;
     }>
   ) {
     await prisma.author.createMany({
@@ -95,6 +115,22 @@ class BooksService {
       skipDuplicates: true
     });
 
+    // await prisma.$queryRaw`
+    //   INSERT INTO "StockStatus" ("name", "authorId")
+    //   VALUES ${Prisma.join(
+    //     books.map(
+    //       (book) => Prisma.sql`
+    //       (
+    //         ${Prisma.join([
+    //           book.name,
+    //           Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`,
+    //           Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`
+    //         ])}
+    //       )`
+    //     )
+    //   )}
+    //   ON CONFLICT DO NOTHING`;
+
     return prisma.$queryRaw`
       INSERT INTO "Book" ("name", "authorId")
       VALUES ${Prisma.join(
@@ -103,6 +139,7 @@ class BooksService {
           (
             ${Prisma.join([
               book.name,
+              Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`,
               Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`
             ])}
           )`
@@ -111,42 +148,26 @@ class BooksService {
       ON CONFLICT DO NOTHING`;
   }
 
-  public update({
+  public async patch({
     bookId,
     name,
-    authorId
+    authorId,
+    quantity
   }: {
-    bookId: number;
-    name: string;
-    authorId: number;
-  }) {
-    return prisma.book.update({
-      where: {
-        id: bookId
-      },
-      data: Prisma.validator<Prisma.BookUpdateInput>()({
-        name,
-        author: {
-          connect: {
-            id: authorId
-          }
-        }
-      }),
-      include: {
-        author: true
-      }
-    });
-  }
-
-  public patch({
-    bookId,
-    name,
-    authorId
-  }: {
-    bookId: number;
+    bookId: string;
     name?: string;
-    authorId?: number;
+    authorId?: string;
+    quantity?: number;
   }) {
+    const book = await this.findOne({ bookId });
+
+    if (!book) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Not found.'
+      });
+    }
+
     return prisma.book.update({
       where: {
         id: bookId
@@ -159,15 +180,26 @@ class BooksService {
                 id: authorId
               }
             }
+          : undefined,
+        stockStatus: quantity
+          ? {
+              update: {
+                where: { id: book.stockStatus?.id },
+                data: {
+                  quantity
+                }
+              }
+            }
           : undefined
       }),
       include: {
-        author: true
+        author: true,
+        stockStatus: true
       }
     });
   }
 
-  public remove({ bookId }: { bookId: number }) {
+  public remove({ bookId }: { bookId: string }) {
     return prisma.book.delete({
       where: {
         id: bookId

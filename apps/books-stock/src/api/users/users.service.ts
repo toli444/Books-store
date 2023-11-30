@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 
 @injectable()
 class UsersService {
-  public signToken = (user: { id: number }) => {
+  public signToken = (user: { id: string }) => {
     const accessToken = jwt.sign(
       { id: user.id },
       process.env.JWT_SECRET as string,
@@ -18,7 +18,7 @@ class UsersService {
     return { accessToken };
   };
 
-  public getOne({ userId, email }: { userId?: number; email?: string }) {
+  public getOne({ userId, email }: { userId?: string; email?: string }) {
     return prisma.user.findUnique({
       where: {
         id: userId,

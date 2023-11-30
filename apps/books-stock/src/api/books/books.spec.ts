@@ -216,7 +216,7 @@ describe('/books', () => {
       await prisma.book.create({
         data: {
           name: 'Nineteen Eighty-Four',
-          authorId: 1
+          authorId: '1'
         }
       });
     });

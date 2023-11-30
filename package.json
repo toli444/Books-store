@@ -7,7 +7,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "infrastructure:start": "./start-app.sh",
+    "infrastructure:start": "./start-infrastructure.sh",
     "infrastructure:stop": "docker-compose down",
     "books-store:start:dev": "npm run start:dev --workspace books-store",
     "books-stock:start:dev": "npm run start:dev --workspace books-stock"
