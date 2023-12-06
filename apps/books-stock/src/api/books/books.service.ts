@@ -7,7 +7,7 @@ import { AppError, HttpStatusCode } from '../../utils/AppError';
 
 @injectable()
 class BooksService {
-  public findOne({ bookId }: { bookId: string }) {
+  findOne({ bookId }: { bookId: string }) {
     return prisma.book.findUnique({
       where: {
         id: bookId
@@ -19,7 +19,7 @@ class BooksService {
     });
   }
 
-  public findAll() {
+  findAll() {
     return prisma.book.findMany({
       include: {
         author: true,
@@ -28,7 +28,19 @@ class BooksService {
     });
   }
 
-  public createWithAuthorInfo({
+  findByIds(ids: Array<string>) {
+    return prisma.book.findMany({
+      include: {
+        author: true,
+        stockStatus: true
+      },
+      where: {
+        id: { in: ids }
+      }
+    });
+  }
+
+  createWithAuthorInfo({
     name,
     authorFirstName,
     authorLastName,
@@ -69,7 +81,7 @@ class BooksService {
     });
   }
 
-  public createWithAuthorId({
+  createWithAuthorId({
     name,
     authorId,
     quantity = 0
@@ -99,12 +111,12 @@ class BooksService {
     });
   }
 
-  public async createMany(
+  async createMany(
     books: Array<{
       name: string;
       authorFirstName: string;
       authorLastName: string;
-      quantity?: number;
+      quantity: number;
     }>
   ) {
     await prisma.author.createMany({
@@ -115,23 +127,7 @@ class BooksService {
       skipDuplicates: true
     });
 
-    // await prisma.$queryRaw`
-    //   INSERT INTO "StockStatus" ("name", "authorId")
-    //   VALUES ${Prisma.join(
-    //     books.map(
-    //       (book) => Prisma.sql`
-    //       (
-    //         ${Prisma.join([
-    //           book.name,
-    //           Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`,
-    //           Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`
-    //         ])}
-    //       )`
-    //     )
-    //   )}
-    //   ON CONFLICT DO NOTHING`;
-
-    return prisma.$queryRaw`
+    await prisma.$queryRaw`
       INSERT INTO "Book" ("name", "authorId")
       VALUES ${Prisma.join(
         books.map(
@@ -139,8 +135,22 @@ class BooksService {
           (
             ${Prisma.join([
               book.name,
-              Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`,
               Prisma.sql`(SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName})`
+            ])}
+          )`
+        )
+      )}
+      ON CONFLICT DO NOTHING`;
+
+    await prisma.$queryRaw`
+      INSERT INTO "StockStatus" ("itemId", "quantity")
+      VALUES ${Prisma.join(
+        books.map(
+          (book) => Prisma.sql`
+          (
+            ${Prisma.join([
+              Prisma.sql`(SELECT "id" FROM "Book" WHERE "authorId" = (SELECT "id" FROM "Author" WHERE "firstName" = ${book.authorFirstName} AND "lastName" = ${book.authorLastName}) AND "name" = ${book.name})`,
+              book.quantity
             ])}
           )`
         )
@@ -148,7 +158,7 @@ class BooksService {
       ON CONFLICT DO NOTHING`;
   }
 
-  public async patch({
+  async patch({
     bookId,
     name,
     authorId,
@@ -199,7 +209,7 @@ class BooksService {
     });
   }
 
-  public remove({ bookId }: { bookId: string }) {
+  remove({ bookId }: { bookId: string }) {
     return prisma.book.delete({
       where: {
         id: bookId
@@ -207,12 +217,21 @@ class BooksService {
     });
   }
 
-  public readBooksFromCsv({ filePath }: { filePath: PathLike }) {
+  readBooksFromCsv({ filePath }: { filePath: PathLike }) {
     return readDataFromCsvFile<{
       name: string;
       authorFirstName: string;
       authorLastName: string;
-    }>({ filePath });
+      quantity: number;
+    }>({
+      filePath,
+      parseData: (data) => {
+        return {
+          ...data,
+          quantity: parseInt(data.quantity, 10)
+        };
+      }
+    });
   }
 }
 

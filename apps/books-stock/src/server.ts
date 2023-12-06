@@ -16,7 +16,12 @@ import JwtStrategy from './api/auth/jwt.strategy';
 const jwtStrategy = container.get(JwtStrategy);
 export const app = express();
 
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient({
+  log:
+    process.env.DATABASE_DEBUG === 'ON'
+      ? ['query', 'info', 'warn', 'error']
+      : undefined
+});
 
 dotenv.config();
 

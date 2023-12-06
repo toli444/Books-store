@@ -2,9 +2,11 @@ import fs, { PathLike } from 'fs';
 import * as csv from 'fast-csv';
 
 export const readDataFromCsvFile = <DataT>({
-  filePath
+  filePath,
+  parseData = (f) => f as DataT
 }: {
   filePath: PathLike;
+  parseData?: (f: object) => DataT;
 }) => {
   const csvData: Array<DataT> = [];
 
@@ -14,8 +16,8 @@ export const readDataFromCsvFile = <DataT>({
       .on('error', (error) => {
         throw error.message;
       })
-      .on('data', (data: DataT) => {
-        csvData.push(data);
+      .on('data', (data: object) => {
+        csvData.push(parseData(data));
       })
       .on('end', () => resolve(csvData));
   });

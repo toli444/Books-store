@@ -14,7 +14,7 @@ async function start() {
   await ordersService.init();
 
   app.listen(process.env.PORT, () => {
-    // console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running at http://localhost:${process.env.PORT}`);
   });
 }
 

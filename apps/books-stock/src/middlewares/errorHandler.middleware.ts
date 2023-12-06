@@ -23,6 +23,7 @@ const errorHandler = (
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    console.log('ERROR: ', error);
     return res.status(HttpStatusCode.BAD_REQUEST).json({
       error: error.meta?.cause || 'DB Error'
     });

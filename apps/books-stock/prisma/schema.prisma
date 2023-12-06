@@ -1,12 +1,14 @@
 // Prisma docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto]
 }
 
 enum UserRole {
@@ -15,17 +17,17 @@ enum UserRole {
 }
 
 model Book {
-  id          String       @id @default(uuid())
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
   author      Author       @relation(fields: [authorId], references: [id])
-  authorId    String
+  authorId    String       @db.Uuid
   stockStatus StockStatus?
 
   @@unique([name, authorId])
 }
 
 model Author {
-  id        String @id @default(uuid())
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName String
   lastName  String
   books     Book[]
@@ -34,7 +36,7 @@ model Author {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email     String   @unique
   password  String
   firstName String
@@ -43,8 +45,8 @@ model User {
 }
 
 model StockStatus {
-  id       String @id @default(uuid())
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   item     Book   @relation(fields: [itemId], references: [id])
-  itemId   String @unique
+  itemId   String @unique @db.Uuid
   quantity Int    @default(0)
 }

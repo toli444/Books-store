@@ -18,6 +18,8 @@ export class OrdersService implements OnModuleInit {
     await this.consumerService.consume(
       { topics: ['order-processed'] },
       {
+        // UPDATE ORDER STATUS
+
         eachMessage: async ({ topic, partition, message }) => {
           console.log({
             value: message.value.toString(),
@@ -49,7 +51,16 @@ export class OrdersService implements OnModuleInit {
 
     await this.producerService.produce({
       topic: 'order-created',
-      messages: [{ key: order._id.toString(), value: JSON.stringify(order) }]
+      messages: [
+        {
+          key: order._id.toString(),
+          value: JSON.stringify({
+            id: order._id,
+            status: order.status,
+            items: order.items
+          })
+        }
+      ]
     });
 
     return order;
