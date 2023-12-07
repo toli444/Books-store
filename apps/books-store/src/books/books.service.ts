@@ -15,11 +15,9 @@ export class BooksService {
     return data;
   }
 
-  async findByIds(ids) {
+  async findById(id: string) {
     const { data } = await firstValueFrom(
-      this.httpService.get<Book[]>(
-        `${process.env.BOOKS_STOCK_URL}/books/${ids}`
-      )
+      this.httpService.get<Book[]>(`${process.env.BOOKS_STOCK_URL}/books/${id}`)
     );
 
     return data;

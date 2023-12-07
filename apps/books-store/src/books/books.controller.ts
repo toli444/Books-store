@@ -17,8 +17,8 @@ export class BooksController {
 
   @UseGuards(AccessTokenGuard)
   @Get()
-  getByIds(@Param('ids') ids: string) {
-    return this.booksService.findByIds(ids);
+  getById(@Param('id') id: string) {
+    return this.booksService.findById(id);
   }
 
   @Roles(UserRoles.ADMIN)

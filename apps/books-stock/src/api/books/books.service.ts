@@ -155,7 +155,7 @@ class BooksService {
           )`
         )
       )}
-      ON CONFLICT DO NOTHING`;
+      ON CONFLICT ("itemId") DO UPDATE SET "quantity" = EXCLUDED.quantity`;
   }
 
   async patch({
@@ -223,14 +223,11 @@ class BooksService {
       authorFirstName: string;
       authorLastName: string;
       quantity: number;
-    }>({
-      filePath,
-      parseData: (data) => {
-        return {
-          ...data,
-          quantity: parseInt(data.quantity, 10)
-        };
-      }
+    }>(filePath, (data) => {
+      return {
+        ...data,
+        quantity: parseInt(data.quantity, 10)
+      };
     });
   }
 }
