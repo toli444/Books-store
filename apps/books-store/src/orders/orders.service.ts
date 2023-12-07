@@ -1,10 +1,13 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConsumerService } from '../kafka/consumer.service';
 import { ProducerService } from '../kafka/producer.service';
 import { PlaceOrderDto } from './dtos/place-order.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Order, OrderDocument } from './schemas/order.schema';
+import { Order as OrderType } from './types/order.types';
+import { OrderStatuses } from './types/order.types';
+import { convertStringToObjectId } from '../utils';
 
 @Injectable()
 export class OrdersService implements OnModuleInit {
@@ -18,19 +21,36 @@ export class OrdersService implements OnModuleInit {
     await this.consumerService.consume(
       { topics: ['order-processed'] },
       {
-        // UPDATE ORDER STATUS
-
         eachMessage: async ({ topic, partition, message }) => {
-          console.log({
-            value: message.value.toString(),
-            offset: message.offset.toString(),
-            timestamp: message.timestamp.toString(),
-            topic: topic.toString(),
-            partition: partition.toString()
-          });
+          try {
+            const order: OrderType = JSON.parse(
+              message.value.toString()
+            ) as OrderType;
+
+            console.log('Order processed event consumed: ', {
+              value: order,
+              offset: message.offset.toString(),
+              timestamp: message.timestamp.toString(),
+              topic: topic.toString(),
+              partition: partition.toString()
+            });
+
+            await this.updateStatus(
+              convertStringToObjectId(order.id),
+              order.status
+            );
+          } catch (e) {
+            throw new BadRequestException('Can not process order.');
+          }
         }
       }
     );
+  }
+
+  updateStatus(orderId: Types.ObjectId, status: OrderStatuses) {
+    return this.orderModel.findByIdAndUpdate(orderId, {
+      status
+    });
   }
 
   findOne(orderId: Types.ObjectId) {

@@ -1,10 +1,11 @@
-export enum orderStatus {
+export enum OrderStatuses {
   NEW = 'NEW',
-  PROCESSED = 'PROCESSED'
+  PROCESSED = 'PROCESSED',
+  REJECTED = 'REJECTED'
 }
 
 export type Order = {
   id: string;
   items: Array<string>;
-  status: orderStatus;
+  status: OrderStatuses;
 };

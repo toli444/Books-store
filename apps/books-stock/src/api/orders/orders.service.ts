@@ -3,7 +3,7 @@ import ConsumerService from '../../kafka/consumer.service';
 import ProducerService from '../../kafka/producer.service';
 import BooksService from '../books/books.service';
 import { AppError, HttpStatusCode } from '../../utils/AppError';
-import { Order } from './order.type';
+import { Order, OrderStatuses } from './order.type';
 import { prisma } from '../../server';
 
 @injectable()
@@ -30,9 +30,9 @@ class OrdersService {
       {
         eachMessage: async ({ topic, partition, message }) => {
           try {
-            const order = JSON.parse(message.value?.toString() || '');
+            const order: Order = JSON.parse(message.value!.toString());
 
-            console.log('NEW ORDER CREATED: ', {
+            console.log('Order created event consumed: ', {
               value: order,
               offset: message.offset.toString(),
               timestamp: message.timestamp.toString(),
@@ -83,7 +83,7 @@ class OrdersService {
             value: JSON.stringify({
               id: order.id,
               items: order.items,
-              status: 'DECLINED',
+              status: OrderStatuses.REJECTED,
               message: 'Some of the ordered products are missing.'
             })
           }
@@ -103,7 +103,7 @@ class OrdersService {
           value: JSON.stringify({
             id: order.id,
             items: order.items,
-            status: 'PROCESSED'
+            status: OrderStatuses.PROCESSED
           })
         }
       ]
