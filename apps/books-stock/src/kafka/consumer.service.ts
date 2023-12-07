@@ -14,7 +14,7 @@ const host = process.env.HOST_IP || ipAddress();
 export default class ConsumerService {
   private readonly consumers: Consumer[];
 
-  public constructor() {
+  constructor() {
     this.consumers = [];
   }
 

@@ -2,8 +2,8 @@ import { injectable } from 'inversify';
 import { prisma } from '../../server';
 
 @injectable()
-class BooksService {
-  public getBooks({ authorId }: { authorId: string }) {
+class AuthorsService {
+  getBooks({ authorId }: { authorId: string }) {
     return prisma.author
       .findUnique({
         where: {
@@ -14,4 +14,4 @@ class BooksService {
   }
 }
 
-export default BooksService;
+export default AuthorsService;

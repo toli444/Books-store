@@ -6,10 +6,10 @@ import AuthorsService from './authors.service';
 class AuthorsController {
   private authorsService: AuthorsService;
 
-  public constructor(authorsService: AuthorsService) {
+  constructor(authorsService: AuthorsService) {
     this.authorsService = authorsService;
   }
-  public getBooks = async (req: Request, res: Response) => {
+  getBooks = async (req: Request, res: Response) => {
     const books = await this.authorsService.getBooks({
       authorId: req.params.authorId
     });

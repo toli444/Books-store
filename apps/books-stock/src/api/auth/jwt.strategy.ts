@@ -21,7 +21,7 @@ decorate(injectable(), Strategy);
 
 @injectable()
 class JwtStrategy extends Strategy {
-  public constructor(usersService: UsersService) {
+  constructor(usersService: UsersService) {
     super(
       {
         jwtFromRequest: ExtractJwt.fromExtractors([

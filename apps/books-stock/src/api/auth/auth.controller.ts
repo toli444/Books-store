@@ -22,11 +22,11 @@ const accessTokenCookieOptions: CookieOptions = {
 class AuthController {
   private usersService: UsersService;
 
-  public constructor(usersService: UsersService) {
+  constructor(usersService: UsersService) {
     this.usersService = usersService;
   }
 
-  public register = async (req: Request, res: Response) => {
+  register = async (req: Request, res: Response) => {
     const { email, password, firstName, lastName } = registerUserSchema.parse(
       req.body
     );
@@ -55,7 +55,7 @@ class AuthController {
     });
   };
 
-  public login = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response) => {
     const { email, password } = loginUserSchema.parse(req.body);
 
     const user = await this.usersService.getOne({ email });
@@ -86,7 +86,7 @@ class AuthController {
     });
   };
 
-  public logout = (req: Request, res: Response) => {
+  logout = (req: Request, res: Response) => {
     res.cookie(jwtCookieName, '', {
       httpOnly: true,
       expires: new Date(0)

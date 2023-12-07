@@ -14,34 +14,34 @@ import path from 'path';
 class BooksController {
   private booksService: BooksService;
 
-  public constructor(booksService: BooksService) {
+  constructor(booksService: BooksService) {
     this.booksService = booksService;
   }
-  public findAll = async (req: Request, res: Response) => {
+  findAll = async (req: Request, res: Response) => {
     const books = await this.booksService.findAll();
     res.json(books);
   };
 
-  public findOne = async (req: Request, res: Response) => {
+  findOne = async (req: Request, res: Response) => {
     const book = await this.booksService.findOne({
       bookId: req.params.bookId
     });
     res.json(book);
   };
 
-  public create = async (req: Request, res: Response) => {
+  create = async (req: Request, res: Response) => {
     const data = createBookWithAuthorIdSchema.parse(req.body);
     const book = await this.booksService.createWithAuthorId(data);
     res.json(book);
   };
 
-  public createWithAuthorInfo = async (req: Request, res: Response) => {
+  createWithAuthorInfo = async (req: Request, res: Response) => {
     const data = createBookWithAuthorInfoSchema.parse(req.body);
     const book = await this.booksService.createWithAuthorInfo(data);
     res.json(book);
   };
 
-  public createFromCSV = async (req: Request, res: Response) => {
+  createFromCSV = async (req: Request, res: Response) => {
     if (!req.file) {
       throw new AppError({
         statusCode: HttpStatusCode.BAD_REQUEST,
@@ -62,7 +62,7 @@ class BooksController {
     });
   };
 
-  public patch = async (req: Request, res: Response) => {
+  patch = async (req: Request, res: Response) => {
     const data = patchBookSchema.parse(req.body);
     const book = await this.booksService.patch({
       bookId: req.params.bookId,
@@ -71,7 +71,7 @@ class BooksController {
     res.json(book);
   };
 
-  public remove = async (req: Request, res: Response) => {
+  remove = async (req: Request, res: Response) => {
     const book = await this.booksService.remove({ bookId: req.params.bookId });
     res.json(book);
   };

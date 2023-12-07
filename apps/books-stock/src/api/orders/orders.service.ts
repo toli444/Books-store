@@ -14,7 +14,7 @@ class OrdersService {
 
   private booksService: BooksService;
 
-  public constructor(
+  constructor(
     consumerService: ConsumerService,
     producerService: ProducerService,
     booksService: BooksService
