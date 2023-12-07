@@ -35,4 +35,4 @@ The idea behind this entire project is to create an event-driven, microservices 
 
 ### Application architecture diagram
 
-[!C4 Application architecture diagram](./c4-books-store.drawio.png)
+![C4 Application architecture diagram](./c4-books-store.drawio.png)
